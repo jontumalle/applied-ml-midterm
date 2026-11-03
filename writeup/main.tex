@@ -1,0 +1,151 @@
+% Compile with make report-pdf from the repository root, or:
+%   python build_latex.py report
+% Fill every TODO and replace all -- cells with measured results.
+% Maximum: 5 pages INCLUDING figures and first-page team information;
+% references are excluded. Do not change the CVPR font sizes or margins.
+\documentclass[10pt,twocolumn,letterpaper]{article}
+\usepackage[pagenumbers]{cvpr}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{figures/}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\missing}{--}
+
+\title{Semi-Supervised Stopping-Reason Prediction\\and Clinical-Trial Outcome Classification}
+\author{\todo{Team member 1} \qquad \todo{Team member 2} \qquad \todo{Team member 3}\\
+CS5785 / ORIE5750 / ECE5414 --- Midterm Project, Fall 2026}
+
+\begin{document}
+\maketitle
+% The assignment asks for team responsibilities on the cover page. Keep these
+% on the first page with the title; a separate cover would consume page budget.
+\noindent\textbf{Team responsibilities.}
+\todo{Member 1: contribution; member 2: contribution; member 3: contribution.}
+
+\begin{abstract}
+\todo{Briefly describe both tasks, the approaches actually tested, the best
+validation results, and the main insight. Write this after completing the report.}
+\end{abstract}
+
+\section{Methods}
+\subsection{Data and preprocessing}
+\todo{Describe the provided splits, missing labels (-100), class imbalance,
+feature choices, scaling of reason embeddings, missing drug data, and
+preprocessing. Fit learned transformations on training data and describe
+validation-based selection. Use IDs only for matching.}
+
+\subsection{Part 1: Semi-supervised reason labeling}
+\todo{Describe at least one unsupervised method and how it generates the five
+missing reason labels. Explain initialization, cluster count or neighborhood
+parameters, convergence criteria, iteration limits, random seeds, and how
+clusters map to multiple labels. Describe any supervised stage, thresholds,
+feature ablations, and every method tested. Use no deep learning.}
+
+\subsection{Part 2: Outcome classification}
+\todo{Describe the original classifier, phase handling, features, tuning,
+probabilities, and F1 thresholds. Reason embeddings and reason labels must
+be used only for error analysis, never as predictive inputs to this classifier.}
+
+\subsection{Error analysis and modification}
+\todo{Match unsuccessful validation trials to Part 1 using trial IDs. Distinguish
+true reason labels from Part 1 predictions; treat unmatched trials as a
+separate no-recorded-stopping-reason group. Count each trial once per phase;
+multi-label trials may belong to several reason groups. Explain the resulting
+classifier modification and its motivation.}
+
+\section{Results}
+\subsection{Part 1 validation performance}
+\todo{Compare all tested approaches and feature choices on part1\_val.csv.
+Report sample-wise F1, macro F1, and F1 for each of the five labels.}
+\begin{table}[ht]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Metric & Baseline & Selected \\
+\midrule
+Sample-wise F1 & \missing & \missing \\
+Macro F1 & \missing & \missing \\
+Safety F1 & \missing & \missing \\
+Funding F1 & \missing & \missing \\
+Efficacy F1 & \missing & \missing \\
+Recruitment F1 & \missing & \missing \\
+Other F1 & \missing & \missing \\
+\bottomrule
+\end{tabular}
+\caption{Part 1 validation results. Add comparisons for other tested models
+and feature ablations; identify the models in the column headings.}
+\label{tab:part1}
+\end{table}
+
+\subsection{Part 2 validation performance}
+\todo{Report metrics for each phase, treating success (label=1) as positive.
+Compute F1 from binary predictions and ROC-AUC and average precision from
+probabilities. Compare the original and modified classifiers even if F1 falls.}
+\begin{table}[ht]
+\centering
+\begin{tabular}{llccc}
+\toprule
+Phase & Model & F1 & ROC-AUC & AP \\
+\midrule
+I & Original & \missing & \missing & \missing \\
+I & Modified & \missing & \missing & \missing \\
+II & Original & \missing & \missing & \missing \\
+II & Modified & \missing & \missing & \missing \\
+III & Original & \missing & \missing & \missing \\
+III & Modified & \missing & \missing & \missing \\
+\bottomrule
+\end{tabular}
+\caption{Part 2 validation performance. AP is PR-AUC measured as average precision.}
+\label{tab:part2}
+\end{table}
+
+\subsection{Errors by stopping reason}
+\todo{For every phase and reason group, report the number of unsuccessful
+validation trials and the fraction incorrectly predicted as successful, for
+both classifiers. State label provenance and explain small or empty groups;
+use N/A for undefined rates.}
+% Duplicate this table for phases II and III, or combine all phases in a table*.
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+Reason (Phase I) & Count & Orig. rate & Mod. rate \\
+\midrule
+Safety & \missing & \missing & \missing \\
+Funding & \missing & \missing & \missing \\
+Efficacy & \missing & \missing & \missing \\
+Recruitment & \missing & \missing & \missing \\
+Other & \missing & \missing & \missing \\
+No recorded reason & \missing & \missing & \missing \\
+\bottomrule
+\end{tabular}
+\caption{False-success fractions among label=0 trials. Repeat for phases II
+and III. Groups overlap when trials have multiple reasons.}
+\label{tab:reason-errors}
+\end{table}
+
+% Example figure: export it from a submitted notebook into figures/.
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=\linewidth]{feature_ablation.pdf}
+%   \caption{Describe the comparison, split, axes, and takeaway.}
+%   \label{fig:ablation}
+% \end{figure}
+
+\section{Discussion}
+\todo{Explain why particular methods, hyperparameters, and features helped or
+failed, including why including every feature may hurt. Discuss temporal
+shift and the validation/test gap (Part 2 Kaggle uses probability log loss),
+reason-category sizes, possible errors in predicted reason labels, and label
+noise. Evaluate the modification's trade-offs, limitations, and main insights.}
+
+% Cite sources where used with \cite{key}; add corresponding \bibitem entries.
+% Include all papers, libraries, websites, and public code used for ideas,
+% code, or phrasing. Do not submit the placeholder reference below.
+\begin{thebibliography}{9}
+\bibitem{replace-me}
+\todo{Replace with actual references: author, title, venue/year or URL and
+access date, as appropriate.}
+\end{thebibliography}
+\end{document}
