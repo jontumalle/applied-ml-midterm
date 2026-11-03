@@ -22,3 +22,10 @@ install: venv
 
 lab: setup
 	"$(VENV)/bin/jupyter" lab CS5785_Midterm_Starter.ipynb
+
+LATEX ?= pdflatex
+
+.PHONY: report-pdf
+report-pdf:
+	cd writeup && $(LATEX) -interaction=nonstopmode -halt-on-error main.tex
+	cd writeup && $(LATEX) -interaction=nonstopmode -halt-on-error main.tex
