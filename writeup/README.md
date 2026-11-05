@@ -85,3 +85,14 @@ original-space separation. Funding positives occur in four clusters; even the
 highest smoothed Funding score (0.2051) is below 0.3. This directly explains the
 absence of Funding pseudo-labels. These diagnostics do not change the trained
 classifier, predictions, or validation scores.
+
+## Controlled Funding-threshold follow-up
+
+The notebook tests recovery thresholds 0.30, 0.20, 0.15, and 0.10 while holding
+clustering, features, other pseudo-labels, classifier regularization, and row
+weights fixed. Outputs are in `part1-results/funding-threshold-experiment/`.
+The three lower thresholds all add the same 112 Funding pseudo-positives.
+Validation Funding true positives stay at 1/4 while false positives rise from
+0 to 3. Funding F1 falls from 0.40 to 0.25 and sample-wise F1 from 0.8547 to
+0.8419. The original model and submission are retained. K-NN remains a proposed
+follow-up, not an evaluated method.
