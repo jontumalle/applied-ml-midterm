@@ -24,23 +24,102 @@ CS5785 / ORIE5750 / ECE5414 --- Midterm Project, Fall 2026}
 \todo{Member 1: contribution; member 2: contribution; member 3: contribution.}
 
 \begin{abstract}
-\todo{Briefly describe both tasks, the approaches actually tested, the best
-validation results, and the main insight. Write this after completing the report.}
+We investigate semi-supervised prediction of five clinical-trial stopping
+reasons. Initial K-means and Gaussian-mixture augmentation fail to improve the
+starter. Cluster inspection exposes suppression of rare Funding labels; lowering
+the cluster threshold adds false positives. A follow-up combining local K-nearest
+neighbor estimates with K-means scores achieves validation sample-wise F1 of
+0.8868 and macro F1 of 0.7792, versus 0.8654 and 0.7067 for the starter.
+Additional year and text features do not improve the initial methods.
+Results are exploratory because validation is small and reused for selection.
+\todo{Extend abstract with completed Part 2 methods and results.}
 \end{abstract}
 
 \section{Methods}
 \subsection{Data and preprocessing}
-\todo{Describe the provided splits, missing labels (-100), class imbalance,
-feature choices, scaling of reason embeddings, missing drug data, and
-preprocessing. Fit learned transformations on training data and describe
-validation-based selection. Use IDs only for matching.}
+Part 1 contains 1,171 training trials (157 fully labeled and 1,014 with all
+five labels masked as $-100$), 78 validation trials, and 312 test trials.
+Labels are multi-label rather than mutually exclusive. The visible positive
+counts are 16 Safety, 8 Funding, 17 Efficacy, 101 Recruitment, and 25 Other.
+The mean start year is 2001.72 for labeled training trials and 2006.42 for
+unlabeled training trials; the test split contains the latest trials.
+We retain the supplied splits and use identifiers only for matching.
+
+We standardize the 150 reason embeddings using all training trials, without
+validation or test observations. Ablations add (i) training-standardized start
+year or (ii) year plus unigram TF-IDF from criteria, diseases, drugs, ICD codes,
+drug targets, actions, and pathways. Missing text becomes an empty string.
+TF-IDF uses lowercase tokens, document frequency at least 3, at most 3,000
+features, sublinear term frequency, and default L2 normalization; its vocabulary
+and inverse document frequencies are fitted on training only. Absent drug
+knowledge contributes no text tokens. SMILES fingerprints are not evaluated.
+Part 2 preprocessing remains to be documented.
 
 \subsection{Part 1: Semi-supervised reason labeling}
-\todo{Describe at least one unsupervised method and how it generates the five
-missing reason labels. Explain initialization, cluster count or neighborhood
-parameters, convergence criteria, iteration limits, random seeds, and how
-clusters map to multiple labels. Describe any supervised stage, thresholds,
-feature ablations, and every method tested. Use no deep learning.}
+We adapt clustering from HW3 and regularized logistic regression from
+HW2~\cite{course-hw2,course-hw3}, using the supplied starter and project
+instructions~\cite{course-project}. No deep learning is used.
+K-means and diagonal-covariance Gaussian mixture models (GMMs) are fitted to
+all training embeddings for $K\in\{5,10,20\}$. K-means uses k-means++,
+10 initializations, 300 iterations maximum, and tolerance $10^{-4}$.
+GMM uses three k-means initializations, covariance regularization $10^{-5}$,
+200 EM iterations maximum, and tolerance $10^{-3}$. All random seeds are 42.
+All six clustering fits converge without convergence warnings.
+
+Let $r_{ik}$ be hard K-means membership or the GMM posterior responsibility,
+and let $L$ denote visible training rows. For reason $j$, the smoothed
+cluster frequency is
+\begin{equation}
+ q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}
+ {\sum_{i\in L}r_{ik}+2},
+\end{equation}
+where $\pi_j$ is the visible-training positive rate. Each missing reason vector
+is recovered by thresholding $\sum_k r_{ik}q_{kj}$ at 0.3 or 0.5 independently
+for each reason. If every prediction is zero, we assign the highest-scoring
+reason. Smoothing provides a prior fallback for clusters without labeled
+members, although none of the fitted clusters has labeled mass below one.
+All known labels are preserved exactly.
+
+Five binary L2-regularized logistic regressions are fitted on the augmented
+training data using liblinear, 1,000 iterations maximum, and $C\in\{0.1,1\}$.
+True labels receive weight 1; pseudo-labels receive weight 0.25 or 1.
+Final predictions use threshold 0.5 with the same highest-score fallback.
+The embedding-only grid contains 48 semi-supervised settings. For each
+clustering method, its best embedding-only recovery settings are held fixed
+while year and text ablations tune $C\in\{0.1,1,10\}$ (12 more settings).
+Nine supervised controls use the same features, $C$ grid, and final fallback
+rule; the unmodified starter baseline is the 70th configuration.
+
+Selection maximizes validation sample-wise F1, with macro F1 as the tie-breaker
+and stable grid order for remaining ties. The selected semi-supervised model
+uses K-means, $K=10$, recovery threshold 0.3, pseudo-label weight 0.25,
+$C=0.1$, and embeddings alone. Its clustering fit takes 19 iterations.
+The best GMM uses $K=20$ and the same threshold, weight, $C$, and features;
+its fit takes 51 iterations. Validation labels are used only for scoring and
+selection, never fitting. Test rows are transformed and predicted only.
+We retain validation labels separately for Part 2 error analysis.
+
+\subsection{Part 1 follow-ups: thresholds and local recovery}
+Diagnostics use training-only PCA and cluster reason counts; PCA is only a
+visualization, not input to the models. The first two PCs retain 24.2\% of
+variance. Funding occurs in four clusters, and its largest smoothed score,
+0.2051, falls below the 0.3 recovery threshold. We test Funding-only thresholds
+0.30, 0.20, 0.15, and 0.10 with all other pseudo-labels and model settings fixed.
+
+We then test Euclidean K-nearest neighbors on standardized embeddings, using
+only the 157 observed training trials as reference neighbors. A fixed grid uses
+$K\in\{3,5,9,15\}$ and uniform or inverse-distance votes. Each neighbor's five
+labels contribute independently. We compare direct supervised KNN predictions,
+KNN-based recovery followed by logistic regression, and a hybrid that equally
+averages KNN scores with smoothed K-means cluster scores before recovery.
+Both recovery methods use threshold 0.3, pseudo-label weight 0.25, embedding
+features, and classifier $C=0.1$. Known labels are preserved; the final
+prediction rule remains unchanged. A labeled-only logistic-regression control
+uses the same $C=0.1$. These are 25 additional settings (8 direct, 16 augmented,
+1 matched control), beyond 70 initial settings and 4 threshold controls.
+The hybrid retains unsupervised clustering; direct KNN alone would not meet
+that requirement. The initial selected artifacts remain frozen; the best
+follow-up augmented candidate is exported separately.
 
 \subsection{Part 2: Outcome classification}
 \todo{Describe the original classifier, phase handling, features, tuning,
@@ -56,27 +135,62 @@ classifier modification and its motivation.}
 
 \section{Results}
 \subsection{Part 1 validation performance}
-\todo{Compare all tested approaches and feature choices on part1\_val.csv.
-Report sample-wise F1, macro F1, and F1 for each of the five labels.}
+Table~\ref{tab:part1} compares the starter with the strongest supervised,
+K-means, and GMM settings. All four select embeddings alone. The supervised
+control uses $C=1$ and differs from the starter by forcing a highest-score
+reason when thresholding yields no positives. Its F1 increase therefore
+reflects that prediction rule, rather than evidence that extra features help.
+The K-means classifier is exported as the selected semi-supervised submission
+even though the supervised controls score higher.
 \begin{table}[ht]
 \centering
-\begin{tabular}{lcc}
-\toprule
-Metric & Baseline & Selected \\
-\midrule
-Sample-wise F1 & \missing & \missing \\
-Macro F1 & \missing & \missing \\
-Safety F1 & \missing & \missing \\
-Funding F1 & \missing & \missing \\
-Efficacy F1 & \missing & \missing \\
-Recruitment F1 & \missing & \missing \\
-Other F1 & \missing & \missing \\
-\bottomrule
-\end{tabular}
-\caption{Part 1 validation results. Add comparisons for other tested models
-and feature ablations; identify the models in the column headings.}
+\input{part1_results}
+\caption{Part 1 validation F1 on 78 trials. Sup. is the best supervised control.
+Each column reports its selected setting; model selection uses sample-wise F1.}
 \label{tab:part1}
 \end{table}
+
+\begin{table}[ht]
+\centering
+\input{part1_feature_results}
+\caption{Best sample-wise F1 within each feature setting. E: embeddings;
+Y: start year; T: text and drug-knowledge TF-IDF. Semi-supervised ablations
+hold label-recovery settings fixed and retune classifier regularization.}
+\label{tab:part1-features}
+\end{table}
+
+The selected method generates 98 Safety, 0 Funding, 128 Efficacy,
+749 Recruitment, and 137 Other positives across 1,014 recovered trials.
+Counts overlap because a trial can receive several reasons. CSV artifacts
+include every configuration and convergence diagnostic, recovered training
+labels, validation/test predictions, and a reason lookup with observed versus
+predicted provenance. No test-label score or Kaggle performance is claimed.
+
+\subsection{Part 1 follow-up results}
+Every lower Funding threshold adds the same 112 pseudo-positives in cluster 7.
+Funding validation true positives remain 1/4, while false positives rise from
+0 to 3. Funding F1 falls from 0.40 to 0.25 and sample F1 from 0.8547 to 0.8419;
+we reject that change.
+
+Table~\ref{tab:knn} summarizes neighbor-based follow-ups. The strongest hybrid
+uses three uniform neighbors. Its sample F1 of 0.8868 exceeds both the initial
+K-means model and the strongest earlier supervised control (0.8782). KNN-only
+recovery also uses three uniform neighbors and has higher macro F1 (0.7873),
+but lower sample F1 (0.8803). The matched labeled-only control at $C=0.1$
+scores 0.8534 sample F1 and 0.6463 macro F1. Direct KNN selects three
+distance-weighted neighbors and fails to identify any Funding positives.
+\begin{table}[ht]
+\centering
+\input{part1_knn_results}
+\caption{Neighbor follow-up validation F1. KNN+LR uses local pseudo-labels;
+Hybrid averages local and K-means scores before weighted LR training.}
+\label{tab:knn}
+\end{table}
+
+The hybrid produces 16 Funding pseudo-positives versus 45 for KNN-only recovery.
+Both best augmented methods correctly identify 2/4 Funding validation positives
+with zero Funding false positives (precision 1.0, recall 0.5). No test performance
+is known. Separate candidate predictions preserve the initial submission.
 
 \subsection{Part 2 validation performance}
 \todo{Report metrics for each phase, treating success (label=1) as positive.
@@ -134,18 +248,68 @@ and III. Groups overlap when trials have multiple reasons.}
 % \end{figure}
 
 \section{Discussion}
-\todo{Explain why particular methods, hyperparameters, and features helped or
-failed, including why including every feature may hurt. Discuss temporal
-shift and the validation/test gap (Part 2 Kaggle uses probability log loss),
-reason-category sizes, possible errors in predicted reason labels, and label
-noise. Evaluate the modification's trade-offs, limitations, and main insights.}
+\paragraph{Part 1.}
+In the initial grid, K-means is more effective than the tested diagonal GMM, but neither improves
+sample-wise F1 over the starter. K-means lowers sample F1 by 0.0107 and macro
+F1 by 0.0143; Funding F1 rises from 0.2857 to 0.4000 while all other reason
+F1 values decrease. This rare-label gain is based on only four Funding-positive
+validation trials, so it should not be overinterpreted.
+
+Cluster membership need not align with each binary reason: a cluster may
+contain several reasons, and smoothing plus thresholding can suppress a rare
+label. No recovered trial receives Funding despite eight visible Funding
+positives. Funding predictions still remain possible because those eight
+true positives are retained when fitting the final classifiers. Recruitment
+appears in 73.87\% of recovered trials versus 64.33\% of labeled training
+trials. These are model-generated proportions, not estimates verified against
+hidden labels. The smaller pseudo-label weight of 0.25 is selected for both
+initial clustering methods, consistent with limiting damage from noisy augmentation.
+
+Year and added text do not improve either clustering method's downstream
+classifier (Table~\ref{tab:part1-features}). The embeddings already encode the
+stopping explanation; eligibility and drug features may describe trial context
+without identifying the stopping reason. With only 157 true labeled examples,
+additional sparse features can add noise or spurious associations. Missing
+matched-drug data further limits their usefulness. We did not evaluate every
+available representation, so these results do not establish that all drug
+features or chemistry fingerprints are unhelpful.
+
+The labeled/unlabeled year difference and latest-year test split limit
+representativeness of the labeled prior. With only 78 validation trials and
+99 evaluated configurations across initial and follow-up experiments, small score differences may reflect selection
+noise. Repeated seeds and independent temporal evaluation would strengthen
+these conclusions; neither is claimed here. Part 2 should retain label
+provenance because pseudo-reason errors can distort its group analysis.
+The neighbor follow-up supports a more local recovery rule in this setting.
+Uniform three-neighbor estimates can retain rare Funding evidence, while the
+hybrid moderates local scores with cluster-level information. Its 16 Funding
+pseudo-positives avoid the wholesale promotion of 112 cluster members seen
+with a lower threshold. However, this comparison does not prove that blending
+will generalize: the blend was fixed at 0.5, no repeated seeds or independent
+holdout are evaluated, and validation selection has been repeated. The macro-F1
+advantage of KNN-only recovery also highlights the trade-off with selecting
+primarily by sample-wise F1.
+\todo{Add Part 2 discussion of error groups, modification trade-offs, label
+noise, and observed validation/test gap once that work is completed.}
 
 % Cite sources where used with \cite{key}; add corresponding \bibitem entries.
 % Include all papers, libraries, websites, and public code used for ideas,
 % code, or phrasing. Do not submit the placeholder reference below.
 \begin{thebibliography}{9}
-\bibitem{replace-me}
-\todo{Replace with actual references: author, title, venue/year or URL and
-access date, as appropriate.}
+\bibitem{course-project}
+CS5785 / ORIE5750 / ECE5414 course staff.
+\emph{Midterm Project} and \emph{CS5785 Midterm Starter Notebook}, Fall 2026.
+Provided project materials; implementation uses pandas, NumPy, SciPy,
+and scikit-learn.
+\bibitem{course-hw2}
+Jonathan Tumalle. \emph{Homework 2: Programming Exercises}, Fall 2026.
+Clinical-trial text features and regularized logistic regression.
+\bibitem{course-hw3}
+Jonathan Tumalle. \emph{Homework 3: Programming Exercises}, Fall 2026.
+K-means, Gaussian discriminant analysis, and text classification.
+\bibitem{ai-assistance}
+OpenAI Codex. Assistance with implementation, execution checks, and drafting
+the Part 1 report, November 2026. Team members should review and adapt the
+work and follow the course policy for disclosure.
 \end{thebibliography}
 \end{document}
