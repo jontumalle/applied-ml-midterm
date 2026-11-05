@@ -61,3 +61,27 @@ The best semi-supervised model is K-means with 10 clusters, recovery threshold
 Its sample-wise F1 is 0.8547, below the starter's 0.8654. The report preserves
 this negative result and discusses rare-label suppression, extra-feature
 limitations, temporal shift, and selection uncertainty on 78 validation rows.
+
+## PCA and cluster inspection
+
+The notebook now includes a training-only diagnostic section after model
+selection. It saves three figures as PNG and PDF in `writeup/figures/`:
+
+- `part1_pca_clusters`: cluster-colored PCA projection, observed-label markers,
+  and projected centroids.
+- `part1_pca_reasons`: five panels of observed positive/negative reasons; hidden
+  labels are shown separately, and multi-label trials can occur in several panels.
+- `part1_cluster_reason_heatmap`: raw positive counts and smoothed recovery
+  probabilities, with the selected 0.3 threshold marked.
+
+CSV diagnostics in `part1-results/` include cluster sizes, observed counts/rates,
+smoothed scores, PCA coordinates/variance, nearest-centroid representative
+trials, and a Funding-specific inspection. Representatives are selected in the
+original 150-dimensional space; their clinical metadata is context, not the
+unavailable stopping explanation text.
+
+The first two PCs explain 24.2% of variance, so the 2D display cannot establish
+original-space separation. Funding positives occur in four clusters; even the
+highest smoothed Funding score (0.2051) is below 0.3. This directly explains the
+absence of Funding pseudo-labels. These diagnostics do not change the trained
+classifier, predictions, or validation scores.

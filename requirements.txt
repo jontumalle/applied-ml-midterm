@@ -1,6 +1,7 @@
 # Notebook imports (NumPy and SciPy are installed transitively).
 pandas>=3.1,<4
 scikit-learn>=1.9.1,<2
+matplotlib>=3.10,<4
 
 # Run the notebook in JupyterLab or an editor such as VS Code.
 ipykernel>=7.4,<8
