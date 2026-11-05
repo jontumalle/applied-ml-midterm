@@ -25,12 +25,13 @@ CS5785 / ORIE5750 / ECE5414 --- Midterm Project, Fall 2026}
 
 \begin{abstract}
 We investigate semi-supervised prediction of five clinical-trial stopping
-reasons. K-means and Gaussian mixtures recover masked training labels, followed
-by weighted one-vs-rest logistic regression. Across 70 validation configurations,
-the selected K-means method achieves sample-wise F1 of 0.8547 versus 0.8654 for
-the starter baseline; augmentation therefore does not improve overall F1.
-Adding year and text features also fails to improve the selected method.
-Rare-label suppression and temporal imbalance limit label recovery.
+reasons. Initial K-means and Gaussian-mixture augmentation fail to improve the
+starter. Cluster inspection exposes suppression of rare Funding labels; lowering
+the cluster threshold adds false positives. A follow-up combining local K-nearest
+neighbor estimates with K-means scores achieves validation sample-wise F1 of
+0.8868 and macro F1 of 0.7792, versus 0.8654 and 0.7067 for the starter.
+Additional year and text features do not improve the initial methods.
+Results are exploratory because validation is small and reused for selection.
 \todo{Extend abstract with completed Part 2 methods and results.}
 \end{abstract}
 
@@ -98,6 +99,28 @@ its fit takes 51 iterations. Validation labels are used only for scoring and
 selection, never fitting. Test rows are transformed and predicted only.
 We retain validation labels separately for Part 2 error analysis.
 
+\subsection{Part 1 follow-ups: thresholds and local recovery}
+Diagnostics use training-only PCA and cluster reason counts; PCA is only a
+visualization, not input to the models. The first two PCs retain 24.2\% of
+variance. Funding occurs in four clusters, and its largest smoothed score,
+0.2051, falls below the 0.3 recovery threshold. We test Funding-only thresholds
+0.30, 0.20, 0.15, and 0.10 with all other pseudo-labels and model settings fixed.
+
+We then test Euclidean K-nearest neighbors on standardized embeddings, using
+only the 157 observed training trials as reference neighbors. A fixed grid uses
+$K\in\{3,5,9,15\}$ and uniform or inverse-distance votes. Each neighbor's five
+labels contribute independently. We compare direct supervised KNN predictions,
+KNN-based recovery followed by logistic regression, and a hybrid that equally
+averages KNN scores with smoothed K-means cluster scores before recovery.
+Both recovery methods use threshold 0.3, pseudo-label weight 0.25, embedding
+features, and classifier $C=0.1$. Known labels are preserved; the final
+prediction rule remains unchanged. A labeled-only logistic-regression control
+uses the same $C=0.1$. These are 25 additional settings (8 direct, 16 augmented,
+1 matched control), beyond 70 initial settings and 4 threshold controls.
+The hybrid retains unsupervised clustering; direct KNN alone would not meet
+that requirement. The initial selected artifacts remain frozen; the best
+follow-up augmented candidate is exported separately.
+
 \subsection{Part 2: Outcome classification}
 \todo{Describe the original classifier, phase handling, features, tuning,
 probabilities, and F1 thresholds. Reason embeddings and reason labels must
@@ -142,6 +165,32 @@ Counts overlap because a trial can receive several reasons. CSV artifacts
 include every configuration and convergence diagnostic, recovered training
 labels, validation/test predictions, and a reason lookup with observed versus
 predicted provenance. No test-label score or Kaggle performance is claimed.
+
+\subsection{Part 1 follow-up results}
+Every lower Funding threshold adds the same 112 pseudo-positives in cluster 7.
+Funding validation true positives remain 1/4, while false positives rise from
+0 to 3. Funding F1 falls from 0.40 to 0.25 and sample F1 from 0.8547 to 0.8419;
+we reject that change.
+
+Table~\ref{tab:knn} summarizes neighbor-based follow-ups. The strongest hybrid
+uses three uniform neighbors. Its sample F1 of 0.8868 exceeds both the initial
+K-means model and the strongest earlier supervised control (0.8782). KNN-only
+recovery also uses three uniform neighbors and has higher macro F1 (0.7873),
+but lower sample F1 (0.8803). The matched labeled-only control at $C=0.1$
+scores 0.8534 sample F1 and 0.6463 macro F1. Direct KNN selects three
+distance-weighted neighbors and fails to identify any Funding positives.
+\begin{table}[ht]
+\centering
+\input{part1_knn_results}
+\caption{Neighbor follow-up validation F1. KNN+LR uses local pseudo-labels;
+Hybrid averages local and K-means scores before weighted LR training.}
+\label{tab:knn}
+\end{table}
+
+The hybrid produces 16 Funding pseudo-positives versus 45 for KNN-only recovery.
+Both best augmented methods correctly identify 2/4 Funding validation positives
+with zero Funding false positives (precision 1.0, recall 0.5). No test performance
+is known. Separate candidate predictions preserve the initial submission.
 
 \subsection{Part 2 validation performance}
 \todo{Report metrics for each phase, treating success (label=1) as positive.
@@ -200,7 +249,7 @@ and III. Groups overlap when trials have multiple reasons.}
 
 \section{Discussion}
 \paragraph{Part 1.}
-K-means is more effective than the tested diagonal GMM, but neither improves
+In the initial grid, K-means is more effective than the tested diagonal GMM, but neither improves
 sample-wise F1 over the starter. K-means lowers sample F1 by 0.0107 and macro
 F1 by 0.0143; Funding F1 rises from 0.2857 to 0.4000 while all other reason
 F1 values decrease. This rare-label gain is based on only four Funding-positive
@@ -214,7 +263,7 @@ true positives are retained when fitting the final classifiers. Recruitment
 appears in 73.87\% of recovered trials versus 64.33\% of labeled training
 trials. These are model-generated proportions, not estimates verified against
 hidden labels. The smaller pseudo-label weight of 0.25 is selected for both
-methods, consistent with limiting damage from noisy augmentation.
+initial clustering methods, consistent with limiting damage from noisy augmentation.
 
 Year and added text do not improve either clustering method's downstream
 classifier (Table~\ref{tab:part1-features}). The embeddings already encode the
@@ -227,10 +276,19 @@ features or chemistry fingerprints are unhelpful.
 
 The labeled/unlabeled year difference and latest-year test split limit
 representativeness of the labeled prior. With only 78 validation trials and
-70 evaluated configurations, small score differences may reflect selection
+99 evaluated configurations across initial and follow-up experiments, small score differences may reflect selection
 noise. Repeated seeds and independent temporal evaluation would strengthen
 these conclusions; neither is claimed here. Part 2 should retain label
 provenance because pseudo-reason errors can distort its group analysis.
+The neighbor follow-up supports a more local recovery rule in this setting.
+Uniform three-neighbor estimates can retain rare Funding evidence, while the
+hybrid moderates local scores with cluster-level information. Its 16 Funding
+pseudo-positives avoid the wholesale promotion of 112 cluster members seen
+with a lower threshold. However, this comparison does not prove that blending
+will generalize: the blend was fixed at 0.5, no repeated seeds or independent
+holdout are evaluated, and validation selection has been repeated. The macro-F1
+advantage of KNN-only recovery also highlights the trade-off with selecting
+primarily by sample-wise F1.
 \todo{Add Part 2 discussion of error groups, modification trade-offs, label
 noise, and observed validation/test gap once that work is completed.}
 

@@ -96,3 +96,20 @@ Validation Funding true positives stay at 1/4 while false positives rise from
 0 to 3. Funding F1 falls from 0.40 to 0.25 and sample-wise F1 from 0.8547 to
 0.8419. The original model and submission are retained. K-NN remains a proposed
 follow-up, not an evaluated method.
+
+## K-NN and hybrid follow-up
+
+The notebook evaluates neighbors 3, 5, 9, and 15 with uniform/distance voting,
+using observed training labels only. Direct K-NN, K-NN recovery + weighted LR,
+and an equal K-means/K-NN hybrid are compared with a matched labeled-only LR
+control (25 new configurations). Best hybrid sample/macro F1: 0.8868/0.7792;
+best K-NN recovery: 0.8803/0.7873. Both recover 2/4 Funding validation cases
+with no Funding false positives. The hybrid creates 16 Funding pseudo-labels.
+
+All results, per-configuration validation predictions, the best augmented
+training labels, candidate settings, and a separate candidate submission are in
+`part1-results/knn-experiment/`. The notebook regenerates
+`writeup/part1_knn_results.tex`. The report now includes the negative Funding
+threshold experiment and the positive local-recovery follow-up; earlier
+statements in this README describe the frozen initial experiment. The original
+root submission is preserved. No Kaggle upload has been performed.
