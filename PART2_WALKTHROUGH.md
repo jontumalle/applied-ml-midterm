@@ -63,6 +63,13 @@ Use one component per conversation turn and check understanding before advancing
 
 - `part2_submission.csv`: 1,500 success probabilities in original test ID order. Uploaded as Kaggle submission `58039392`; status COMPLETE, public log loss **0.61046**.
 - `part2-results/`: all 81 candidate scores, selected settings, baseline/selected validation predictions, reason-label provenance, and all 18 reason-group comparisons.
-- `writeup/main.tex`: combined technical report; `make report-pdf` builds the four-page draft. Team names/responsibilities still require user-provided facts.
+- `writeup/main.tex`: combined technical report; `make report-pdf` builds the five-page draft. Team names/responsibilities still require user-provided facts.
 - Later-year test trials may differ from historical train/validation data. Public log loss is 0.0366 above the equal-phase validation loss of 0.57383. The public score covers a subset with potentially different composition; this does not prove temporal shift caused the gap. Full-test and per-phase test performance remain unavailable.
 - Check: Is it clear which conclusions are measured and which remain hypotheses about generalization?
+
+## Follow-up: training penalties rather than decision thresholds
+
+- `PART2_NOTES.md` records 1x/2x/4x failure-loss weights with fixed threshold 0.5.
+- Raw Phase III fold-model false-success rates fall 59.3% → 36.6% → 19.5%, but missed-success rates rise 14.6% → 26.3% → 43.8%.
+- Unweighted calibration largely restores the original probability balance; selected-procedure Phase III false-success rates are 59.3% → 58.5% → 57.7%.
+- This explains why changing training costs and then calibrating to natural frequencies can pursue different goals. No penalty is automatically selected and no new upload is made.

@@ -143,6 +143,19 @@ probability score and equal-sized test phases. Report F1 from fixed binary
 predictions and ROC-AUC/AP from success probabilities. Recompute all reason-group
 errors with unchanged group membership. Reasons do not set individual model weights.
 
+\subsection{Follow-up: failure-weighted training}
+On a branch from merged main, fix selected features, $C$, calibration, and
+threshold 0.5, and test relative failure/success loss weights $m\in\{1,2,4\}$.
+For each fit with class counts $n_0,n_1$, set $w_1=n/(mn_0+n_1)$ and $w_0=mw_1$;
+weights sum to $n$, controlling loss scale while changing relative costs.
+Recompute weights inside each calibration fold. The nine trained configurations
+preserve training-only fitting and evaluation-only reasons. For II/III, also
+inspect mean raw probabilities from the exact same fold models before sigmoid
+calibration (six diagnostic views). Calibration remains unweighted against
+observed outcomes and may reverse the probability shift. The 1:1 controls
+reproduce the frozen predictions. No temporal evaluation or cost-weighted
+calibration is included; no candidate replaces the submitted model automatically.
+
 \section{Results}
 \subsection{Part 1}
 Table~\ref{tab:initial} shows selected initial settings: K-means uses 10 clusters,
@@ -228,6 +241,26 @@ its n is the unmatched count. Categories overlap. N/A indicates no trials.}
 \label{tab:errors}
 \end{table}
 
+\subsection{Failure-weight follow-up results}
+Table~\ref{tab:failure-weight} keeps the original calibration choices. Phase I,
+which is uncalibrated, reduces false-success rate from 37.5\% to 25.0\%/9.4\%
+at 2x/4x, but misses 31.8\%/51.8\% of successes versus 17.6\% originally.
+Before calibration, identical Phase III fold models reduce false-success rate
+from 59.3\% to 36.6\%/19.5\%, while missed-success rate rises from 14.6\% to
+26.3\%/43.8\%. Efficacy-group errors fall from 7/8 to 5/8 and 4/8. After
+calibration, rates return to 58.5\%/57.7\%, with Efficacy errors still 7/8.
+Phase II raw rates fall from 28.7\% to 4.5\%/0.4\%, but calibrated rates stay
+near 29.4\%. Equal-phase original-procedure loss worsens from 0.5738 to
+0.5796/0.5994. All candidates remain separate and unsubmitted.
+\begin{table}[ht]
+\centering
+\input{part2_failure_penalty_results}
+\caption{Failure-weight ablation with original calibration choices and fixed
+threshold 0.5. False+/Missed+: false-success/missed-success fractions. Weight
+is the relative failure/success loss weight, normalized within each fit.}
+\label{tab:failure-weight}
+\end{table}
+
 \section{Discussion}
 \paragraph{Part 1.}
 Clusters need not correspond one-to-one to reasons; local or multi-label variation
@@ -256,6 +289,17 @@ rate to 40.7\%, but has loss 0.5734 and F1 0.7580, versus the selected model's
 0.5485 and 0.7915. We retain the log-loss-selected model for the stated competition
 objective and report its subgroup regressions rather than claim uniform improvement.
 
+The failure-weight experiment separates two goals. Cost-sensitive training
+can reduce false-success decisions, but unweighted calibration targets observed
+outcome probabilities and largely counteracts that shift in II/III. Without
+calibration the models become more conservative at substantial recall and
+log-loss cost. A penalty must therefore be judged against an explicit error-cost
+or recall constraint, not only the fraction of failures predicted successful.
+These ratios are experimental choices, not established clinical costs. We do
+not automatically replace the probability model or treat a higher penalty as
+uniformly better. Reused validation and small inferred reason groups remain
+limitations; temporal generalization of these weighted models is untested.
+
 Field-separated clinical features help the selected Phase III model; criteria-only
 features suffice in I/II. The combined knowledge/year block is never selected;
 this joint ablation cannot isolate the individual value of year versus drug
@@ -274,8 +318,8 @@ average versus a public-subset aggregate. Temporal shift is a plausible contribu
 not an established cause of the gap; sample composition and selection optimism
 may also contribute. Hidden outcomes prevent full-test or per-phase test
 analysis. Reusing validation for 81 candidate scores
-also creates selection optimism. Training-only temporal evaluation and stability
-across seeds are possible follow-ups, not completed experiments. Source notebooks,
+also creates selection optimism. For these failure-weighted models, training-only temporal evaluation and
+stability across seeds are possible follow-ups, not completed experiments. Source notebooks,
 all measured tables, prediction/provenance audits, and both submission files are
 retained for reproducibility.
 

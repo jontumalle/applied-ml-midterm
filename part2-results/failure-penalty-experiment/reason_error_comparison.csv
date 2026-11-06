@@ -1,0 +1,61 @@
+phase,reason,n,false_successes_weighted,false_success_rate_weighted,observed_reason_n,predicted_reason_n,unmatched_n,view,failure_multiplier,false_successes_control,false_success_rate_control,rate_change
+I,Safety,8,3,0.375,1,7,0,selected_procedure,2.0,3,0.375,0.0
+I,Funding,3,1,0.3333333333333333,1,2,0,selected_procedure,2.0,1,0.3333333333333333,0.0
+I,Efficacy,4,1,0.25,0,4,0,selected_procedure,2.0,2,0.5,-0.25
+I,Recruitment,24,3,0.125,2,22,0,selected_procedure,2.0,7,0.2916666666666667,-0.16666666666666669
+I,Other,3,0,0.0,0,3,0,selected_procedure,2.0,0,0.0,0.0
+I,No recorded reason,28,10,0.35714285714285715,0,0,28,selected_procedure,2.0,14,0.5,-0.14285714285714285
+II,Safety,11,4,0.36363636363636365,1,10,0,selected_procedure,2.0,4,0.36363636363636365,0.0
+II,Funding,4,0,0.0,1,3,0,selected_procedure,2.0,0,0.0,0.0
+II,Efficacy,15,6,0.4,0,15,0,selected_procedure,2.0,6,0.4,0.0
+II,Recruitment,93,17,0.1827956989247312,12,81,0,selected_procedure,2.0,16,0.17204301075268819,0.010752688172043001
+II,Other,15,5,0.3333333333333333,3,12,0,selected_procedure,2.0,5,0.3333333333333333,0.0
+II,No recorded reason,144,51,0.3541666666666667,0,0,144,selected_procedure,2.0,52,0.3611111111111111,-0.00694444444444442
+III,Safety,5,1,0.2,1,4,0,selected_procedure,2.0,1,0.2,0.0
+III,Funding,0,0,,0,0,0,selected_procedure,2.0,0,,
+III,Efficacy,8,7,0.875,0,8,0,selected_procedure,2.0,7,0.875,0.0
+III,Recruitment,25,16,0.64,5,20,0,selected_procedure,2.0,16,0.64,0.0
+III,Other,9,5,0.5555555555555556,2,7,0,selected_procedure,2.0,5,0.5555555555555556,0.0
+III,No recorded reason,82,47,0.573170731707317,0,0,82,selected_procedure,2.0,48,0.5853658536585366,-0.012195121951219523
+I,Safety,8,1,0.125,1,7,0,selected_procedure,4.0,3,0.375,-0.25
+I,Funding,3,0,0.0,1,2,0,selected_procedure,4.0,1,0.3333333333333333,-0.3333333333333333
+I,Efficacy,4,0,0.0,0,4,0,selected_procedure,4.0,2,0.5,-0.5
+I,Recruitment,24,0,0.0,2,22,0,selected_procedure,4.0,7,0.2916666666666667,-0.2916666666666667
+I,Other,3,0,0.0,0,3,0,selected_procedure,4.0,0,0.0,0.0
+I,No recorded reason,28,5,0.17857142857142858,0,0,28,selected_procedure,4.0,14,0.5,-0.3214285714285714
+II,Safety,11,3,0.2727272727272727,1,10,0,selected_procedure,4.0,4,0.36363636363636365,-0.09090909090909094
+II,Funding,4,0,0.0,1,3,0,selected_procedure,4.0,0,0.0,0.0
+II,Efficacy,15,7,0.4666666666666667,0,15,0,selected_procedure,4.0,6,0.4,0.06666666666666665
+II,Recruitment,93,17,0.1827956989247312,12,81,0,selected_procedure,4.0,16,0.17204301075268819,0.010752688172043001
+II,Other,15,4,0.26666666666666666,3,12,0,selected_procedure,4.0,5,0.3333333333333333,-0.06666666666666665
+II,No recorded reason,144,53,0.3680555555555556,0,0,144,selected_procedure,4.0,52,0.3611111111111111,0.006944444444444475
+III,Safety,5,1,0.2,1,4,0,selected_procedure,4.0,1,0.2,0.0
+III,Funding,0,0,,0,0,0,selected_procedure,4.0,0,,
+III,Efficacy,8,7,0.875,0,8,0,selected_procedure,4.0,7,0.875,0.0
+III,Recruitment,25,16,0.64,5,20,0,selected_procedure,4.0,16,0.64,0.0
+III,Other,9,5,0.5555555555555556,2,7,0,selected_procedure,4.0,5,0.5555555555555556,0.0
+III,No recorded reason,82,46,0.5609756097560976,0,0,82,selected_procedure,4.0,48,0.5853658536585366,-0.024390243902438935
+II,Safety,11,1,0.09090909090909091,1,10,0,before_calibration,2.0,4,0.36363636363636365,-0.2727272727272727
+II,Funding,4,0,0.0,1,3,0,before_calibration,2.0,0,0.0,0.0
+II,Efficacy,15,1,0.06666666666666667,0,15,0,before_calibration,2.0,6,0.4,-0.33333333333333337
+II,Recruitment,93,2,0.021505376344086023,12,81,0,before_calibration,2.0,15,0.16129032258064516,-0.13978494623655913
+II,Other,15,2,0.13333333333333333,3,12,0,before_calibration,2.0,4,0.26666666666666666,-0.13333333333333333
+II,No recorded reason,144,7,0.04861111111111111,0,0,144,before_calibration,2.0,52,0.3611111111111111,-0.3125
+III,Safety,5,1,0.2,1,4,0,before_calibration,2.0,1,0.2,0.0
+III,Funding,0,0,,0,0,0,before_calibration,2.0,0,,
+III,Efficacy,8,5,0.625,0,8,0,before_calibration,2.0,7,0.875,-0.25
+III,Recruitment,25,10,0.4,5,20,0,before_calibration,2.0,16,0.64,-0.24
+III,Other,9,4,0.4444444444444444,2,7,0,before_calibration,2.0,5,0.5555555555555556,-0.11111111111111116
+III,No recorded reason,82,28,0.34146341463414637,0,0,82,before_calibration,2.0,48,0.5853658536585366,-0.24390243902439018
+II,Safety,11,1,0.09090909090909091,1,10,0,before_calibration,4.0,4,0.36363636363636365,-0.2727272727272727
+II,Funding,4,0,0.0,1,3,0,before_calibration,4.0,0,0.0,0.0
+II,Efficacy,15,0,0.0,0,15,0,before_calibration,4.0,6,0.4,-0.4
+II,Recruitment,93,0,0.0,12,81,0,before_calibration,4.0,15,0.16129032258064516,-0.16129032258064516
+II,Other,15,0,0.0,3,12,0,before_calibration,4.0,4,0.26666666666666666,-0.26666666666666666
+II,No recorded reason,144,0,0.0,0,0,144,before_calibration,4.0,52,0.3611111111111111,-0.3611111111111111
+III,Safety,5,0,0.0,1,4,0,before_calibration,4.0,1,0.2,-0.2
+III,Funding,0,0,,0,0,0,before_calibration,4.0,0,,
+III,Efficacy,8,4,0.5,0,8,0,before_calibration,4.0,7,0.875,-0.375
+III,Recruitment,25,5,0.2,5,20,0,before_calibration,4.0,16,0.64,-0.44
+III,Other,9,3,0.3333333333333333,2,7,0,before_calibration,4.0,5,0.5555555555555556,-0.22222222222222227
+III,No recorded reason,82,13,0.15853658536585366,0,0,82,before_calibration,4.0,48,0.5853658536585366,-0.42682926829268286

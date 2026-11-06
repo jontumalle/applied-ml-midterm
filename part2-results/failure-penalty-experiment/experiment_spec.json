@@ -1,0 +1,65 @@
+{
+  "failure_multipliers": [
+    1.0,
+    2.0,
+    4.0
+  ],
+  "threshold": 0.5,
+  "trained_configurations": 9,
+  "additional_pre_calibration_views": 6,
+  "normalization": "class weights sum to each fit's row count, including each calibration fold",
+  "phase_specs": {
+    "I": {
+      "candidate": "criteria_tfidf_lr_C10_none",
+      "spec": {
+        "family": "lr",
+        "features": "criteria_tfidf",
+        "C": 10.0,
+        "class_weight": "none",
+        "alpha": null,
+        "calibration": "none"
+      },
+      "validation_log_loss": 0.560305342354778,
+      "validation_F1": 0.7821229050279329,
+      "decision_threshold": 0.5,
+      "refit_on_validation": false
+    },
+    "II": {
+      "candidate": "criteria_tfidf_lr_C1_none_calibrated",
+      "spec": {
+        "family": "lr",
+        "features": "criteria_tfidf",
+        "C": 1.0,
+        "class_weight": "none",
+        "alpha": null,
+        "calibration": "sigmoid_3fold"
+      },
+      "validation_log_loss": 0.6126838537951561,
+      "validation_F1": 0.62882096069869,
+      "decision_threshold": 0.5,
+      "refit_on_validation": false
+    },
+    "III": {
+      "candidate": "clinical_tfidf_lr_C1_none_calibrated",
+      "spec": {
+        "family": "lr",
+        "features": "clinical_tfidf",
+        "C": 1.0,
+        "class_weight": "none",
+        "alpha": null,
+        "calibration": "sigmoid_3fold"
+      },
+      "validation_log_loss": 0.5484914130055629,
+      "validation_F1": 0.7915057915057915,
+      "decision_threshold": 0.5,
+      "refit_on_validation": false
+    }
+  },
+  "calibration_objective": "unweighted observed training outcomes; cost weights apply to classifiers only",
+  "pre_calibration_view": "mean probabilities from the same fitted fold pipelines, without sigmoid transforms",
+  "reason_labels_used_for": "evaluation grouping only",
+  "year_added": false,
+  "original_submission_changed": false,
+  "uploaded_to_kaggle": false,
+  "temporal_evaluation_performed": false
+}

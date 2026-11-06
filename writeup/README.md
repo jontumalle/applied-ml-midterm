@@ -1,7 +1,7 @@
 # Combined midterm report
 
 `main.tex` contains the completed technical Methods, Results, and Discussion for
-Parts 1 and 2, using the course's CVPR template. The compiled draft is four pages,
+Parts 1 and 2, using the course's CVPR template. The compiled draft is five pages,
 including references. Fill only the remaining team names and responsibilities;
 no team identity or contributions have been invented. Review the analysis and
 AI assistance disclosure before submission under course policy.
@@ -75,3 +75,14 @@ log loss 0.61046 is about 0.0366 above equal-phase validation loss 0.57383. The
 public score is a subset aggregate, not full-test or per-phase evaluation.
 Different cohort/phase composition and selection optimism, as well as possible
 temporal shift, may contribute; the result does not establish a causal explanation.
+
+## Failure-loss follow-up
+
+`PART2_NOTES.md` logs a new branch-from-main experiment with relative failure
+weights 1x/2x/4x, fixed features/C/calibration/threshold, and weight normalization
+inside each fit. Nine trained configurations and six same-model raw-probability
+views are saved in `part2-results/failure-penalty-experiment/`. The notebook
+regenerates `part2_failure_penalty_results.tex`; the report includes the trade-off
+between fewer false successes and more missed successes, plus calibration's
+counteracting effect. Original models/submission remain unchanged. The earlier
+year-only follow-up is on `feat/part2-outcome-models`, not merged into this branch.

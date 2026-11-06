@@ -30,3 +30,9 @@ full-test and per-phase scores are not available. Cohort/phase composition,
 selection optimism, and possible temporal shift limit interpretation of the gap.
 The equal-phase validation log loss improves from 0.9401 to 0.5738; improved
 aggregate metrics do not imply every group improves (notably Phase III).
+
+`failure-penalty-experiment/` contains normalized 1x/2x/4x failure-loss
+comparisons, same-fold pre-calibration diagnostics, weight audits, all validation
+predictions, 90 reason-group rows, within-view group changes, and unsubmitted
+candidate files. See `../PART2_NOTES.md`. These are separate from the frozen
+original selected-model/Kaggle artifacts.
