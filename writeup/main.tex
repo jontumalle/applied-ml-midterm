@@ -197,8 +197,10 @@ F1, ROC-AUC, and AP improve in each phase. Calibration modestly improves raw
 TF-IDF loss in II (0.6157 to 0.6127) and III (0.5517 to 0.5485), but worsens
 Phase I's best raw LR loss (0.5603 to 0.5766), so it is not selected there.
 Best Naive Bayes losses are 0.6141/0.6361/0.6892 for I/II/III, all worse than
-selected LR. No Part 2 test score is available; the 1,500-row probability
-submission is prepared locally.
+selected LR. The 1,500-row probability submission was uploaded as Kaggle
+submission 58039392 and received public log loss 0.61046. This exceeds the
+equal-phase validation loss 0.57383 by 0.03663. The public score evaluates a
+leaderboard subset; full-test and per-phase test scores are unavailable.
 \begin{table}[ht]
 \centering
 \input{part2_metrics}
@@ -266,8 +268,12 @@ necessarily trials with no failure explanation. Outcome-label noise may remain.
 The supplied train/validation splits have similar historical periods, whereas
 test trials are later. Shift in treatment, study design, vocabulary, and success
 rates may reduce test performance; calibration learned on historical trials may
-not transfer. The Part 2 validation/test gap cannot be measured without test
-outcomes or a leaderboard result. Reusing validation for 81 candidate scores
+not transfer. The observed validation-to-public gap is about 0.0366 log-loss
+units, but the comparison uses different cohorts and an equal-phase validation
+average versus a public-subset aggregate. Temporal shift is a plausible contributor,
+not an established cause of the gap; sample composition and selection optimism
+may also contribute. Hidden outcomes prevent full-test or per-phase test
+analysis. Reusing validation for 81 candidate scores
 also creates selection optimism. Training-only temporal evaluation and stability
 across seeds are possible follow-ups, not completed experiments. Source notebooks,
 all measured tables, prediction/provenance audits, and both submission files are

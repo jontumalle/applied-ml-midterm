@@ -22,6 +22,11 @@
   supplementary model, split, and reproducibility information.
 
 The notebook generates `../part2_submission.csv` with 1,500 test success
-probabilities and report tables in `../writeup/`. No Part 2 upload has been made.
+probabilities and report tables in `../writeup/`. The file was uploaded separately
+through the Kaggle CLI as submission `58039392` (COMPLETE). Public log loss is
+0.61046, compared with equal-phase validation loss 0.57383 (gap about 0.0366).
+`kaggle_submission.json` records this result. The public score covers a subset;
+full-test and per-phase scores are not available. Cohort/phase composition,
+selection optimism, and possible temporal shift limit interpretation of the gap.
 The equal-phase validation log loss improves from 0.9401 to 0.5738; improved
 aggregate metrics do not imply every group improves (notably Phase III).

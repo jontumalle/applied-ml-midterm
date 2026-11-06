@@ -61,8 +61,8 @@ Use one component per conversation turn and check understanding before advancing
 
 ## 7. Deliverables and remaining uncertainty
 
-- `part2_submission.csv`: 1,500 success probabilities in original test ID order. It has not been uploaded to Kaggle.
+- `part2_submission.csv`: 1,500 success probabilities in original test ID order. Uploaded as Kaggle submission `58039392`; status COMPLETE, public log loss **0.61046**.
 - `part2-results/`: all 81 candidate scores, selected settings, baseline/selected validation predictions, reason-label provenance, and all 18 reason-group comparisons.
 - `writeup/main.tex`: combined technical report; `make report-pdf` builds the four-page draft. Team names/responsibilities still require user-provided facts.
-- Later-year test trials may differ from historical train/validation data. No Part 2 test score or measured validation/test gap is claimed.
+- Later-year test trials may differ from historical train/validation data. Public log loss is 0.0366 above the equal-phase validation loss of 0.57383. The public score covers a subset with potentially different composition; this does not prove temporal shift caused the gap. Full-test and per-phase test performance remain unavailable.
 - Check: Is it clear which conclusions are measured and which remain hypotheses about generalization?

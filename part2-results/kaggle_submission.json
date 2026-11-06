@@ -1,0 +1,10 @@
+{
+  "submission_ref": 58039392,
+  "status": "COMPLETE",
+  "public_log_loss": 0.61046,
+  "validation_equal_phase_log_loss": 0.5738268697184989,
+  "public_minus_validation_log_loss": 0.03663313028150106,
+  "competition": "cs-5785-midterm-2026-part-2-trial-outcome-prediction",
+  "filename": "part2_submission.csv",
+  "limitation": "Public leaderboard subset aggregate only; not full-test or per-phase evaluation. Comparison with equal-phase validation uses different cohorts and potentially different phase composition; it does not establish temporal shift as the cause of the gap."
+}

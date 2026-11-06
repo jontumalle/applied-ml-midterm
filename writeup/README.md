@@ -53,7 +53,9 @@ slightly narrower cell padding to fit one column.
   `part1_submission.csv` remains the older K-means output for comparison.
 - `part2-results/`: all 81 per-phase model scores, selected settings, full
   validation predictions, label provenance, and 18 reason-group comparisons.
-- `part2_submission.csv`: 1,500 success probabilities, not uploaded by the notebook.
+- `part2_submission.csv`: 1,500 success probabilities, uploaded separately through
+  the Kaggle CLI as submission `58039392` (COMPLETE; public log loss 0.61046).
+  The notebook itself does not upload files.
 - `PART2_WALKTHROUGH.md`: sequential explanation with understanding checks.
 
 Part 2 uses the latest Part 1 hybrid's reason lookup, preserving true labels
@@ -65,3 +67,11 @@ the report presents that trade-off.
 
 `cvpr.sty` is the existing official CVPR 2026 style from
 https://github.com/cvpr-org/author-kit/tree/12909ae437f6dbc7435069cfdb4ca44c18e6a02f.
+
+## Recorded Part 2 leaderboard result
+
+`part2-results/kaggle_submission.json` records the completed submission. Public
+log loss 0.61046 is about 0.0366 above equal-phase validation loss 0.57383. The
+public score is a subset aggregate, not full-test or per-phase evaluation.
+Different cohort/phase composition and selection optimism, as well as possible
+temporal shift, may contribute; the result does not establish a causal explanation.
