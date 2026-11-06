@@ -1,0 +1,4 @@
+phase,candidate,family,features,C,class_weight,alpha,calibration,convergence_warnings,F1,ROC_AUC,AP,log_loss,brier,false_success_rate,confident_wrong_fraction
+I,criteria_tfidf_lr_C10_none,lr,criteria_tfidf,10.0,none,,none,0,0.7821229050279329,0.7801470588235294,0.8214421064245689,0.560305342354778,0.1882534118008554,0.375,0.013422818791946308
+II,criteria_tfidf_lr_C1_none_calibrated,lr,criteria_tfidf,1.0,none,,sigmoid_3fold,0,0.62882096069869,0.7177486408698435,0.6961527468450578,0.6126838537951561,0.21276239546882475,0.2943396226415094,0.0
+III,clinical_tfidf_lr_C1_none_calibrated,lr,clinical_tfidf,1.0,none,,sigmoid_3fold,0,0.7915057915057915,0.7508807588075881,0.8504253427978459,0.5484914130055629,0.18565576126390312,0.5934959349593496,0.005509641873278237

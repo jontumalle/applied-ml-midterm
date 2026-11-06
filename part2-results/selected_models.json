@@ -1,0 +1,47 @@
+{
+  "I": {
+    "candidate": "criteria_tfidf_lr_C10_none",
+    "spec": {
+      "family": "lr",
+      "features": "criteria_tfidf",
+      "C": 10.0,
+      "class_weight": "none",
+      "alpha": null,
+      "calibration": "none"
+    },
+    "validation_log_loss": 0.560305342354778,
+    "validation_F1": 0.7821229050279329,
+    "decision_threshold": 0.5,
+    "refit_on_validation": false
+  },
+  "II": {
+    "candidate": "criteria_tfidf_lr_C1_none_calibrated",
+    "spec": {
+      "family": "lr",
+      "features": "criteria_tfidf",
+      "C": 1.0,
+      "class_weight": "none",
+      "alpha": null,
+      "calibration": "sigmoid_3fold"
+    },
+    "validation_log_loss": 0.6126838537951561,
+    "validation_F1": 0.62882096069869,
+    "decision_threshold": 0.5,
+    "refit_on_validation": false
+  },
+  "III": {
+    "candidate": "clinical_tfidf_lr_C1_none_calibrated",
+    "spec": {
+      "family": "lr",
+      "features": "clinical_tfidf",
+      "C": 1.0,
+      "class_weight": "none",
+      "alpha": null,
+      "calibration": "sigmoid_3fold"
+    },
+    "validation_log_loss": 0.5484914130055629,
+    "validation_F1": 0.7915057915057915,
+    "decision_threshold": 0.5,
+    "refit_on_validation": false
+  }
+}
