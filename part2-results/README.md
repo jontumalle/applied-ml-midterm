@@ -30,3 +30,8 @@ full-test and per-phase scores are not available. Cohort/phase composition,
 selection optimism, and possible temporal shift limit interpretation of the gap.
 The equal-phase validation log loss improves from 0.9401 to 0.5738; improved
 aggregate metrics do not imply every group improves (notably Phase III).
+
+`year-only-experiment/` is a separate 12-configuration follow-up: fixed text
+models with/without year on supplied validation and a retrospective temporal
+check. It contains all metrics, predictions, cohort manifests, yearly rates,
+a specification, and an unsubmitted candidate. See `../PART2_NOTES.md`.

@@ -63,6 +63,13 @@ Use one component per conversation turn and check understanding before advancing
 
 - `part2_submission.csv`: 1,500 success probabilities in original test ID order. Uploaded as Kaggle submission `58039392`; status COMPLETE, public log loss **0.61046**.
 - `part2-results/`: all 81 candidate scores, selected settings, baseline/selected validation predictions, reason-label provenance, and all 18 reason-group comparisons.
-- `writeup/main.tex`: combined technical report; `make report-pdf` builds the four-page draft. Team names/responsibilities still require user-provided facts.
+- `writeup/main.tex`: combined technical report; `make report-pdf` builds the five-page draft. Team names/responsibilities still require user-provided facts.
 - Later-year test trials may differ from historical train/validation data. Public log loss is 0.0366 above the equal-phase validation loss of 0.57383. The public score covers a subset with potentially different composition; this does not prove temporal shift caused the gap. Full-test and per-phase test performance remain unavailable.
 - Check: Is it clear which conclusions are measured and which remain hypotheses about generalization?
+
+## Follow-up: year as an isolated feature
+
+- `PART2_NOTES.md` records a fixed-model year-only comparison and a retrospective temporal check.
+- Year worsens log loss in all phases on supplied validation, but helps Phase III on the later-year diagnostic. Aggregate loss is slightly worse on both evaluations.
+- Adding year increases temporal false-success rates even where F1 or loss improves, reinforcing Component 6.
+- This does not establish that year is always unhelpful or that success criteria changed. The original submitted models remain in use; the new candidate is saved separately and not uploaded.

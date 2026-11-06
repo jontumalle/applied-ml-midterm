@@ -1,7 +1,7 @@
 # Combined midterm report
 
 `main.tex` contains the completed technical Methods, Results, and Discussion for
-Parts 1 and 2, using the course's CVPR template. The compiled draft is four pages,
+Parts 1 and 2, using the course's CVPR template. The compiled draft is five pages,
 including references. Fill only the remaining team names and responsibilities;
 no team identity or contributions have been invented. Review the analysis and
 AI assistance disclosure before submission under course policy.
@@ -75,3 +75,15 @@ log loss 0.61046 is about 0.0366 above equal-phase validation loss 0.57383. The
 public score is a subset aggregate, not full-test or per-phase evaluation.
 Different cohort/phase composition and selection optimism, as well as possible
 temporal shift, may contribute; the result does not establish a causal explanation.
+
+## Year-only follow-up
+
+`PART2_NOTES.md` logs the controlled follow-up and assumptions. Twelve fixed
+comparisons add year alone to the selected phase models on supplied validation
+and a retrospective training-only temporal split (fit through 2010, check
+2011–2013). The notebook generates `part2_year_results.tex`; full metrics,
+predictions, split manifests, yearly rates, and an unsubmitted year candidate
+are in `part2-results/year-only-experiment/`. Year worsens supplied-validation
+loss in all phases, and improves only Phase III temporal loss. The original
+models, submission, and recorded Kaggle score are retained. The report now
+includes this follow-up; the original 81-configuration selection remains frozen.

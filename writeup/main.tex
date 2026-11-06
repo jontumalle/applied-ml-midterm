@@ -143,6 +143,19 @@ probability score and equal-sized test phases. Report F1 from fixed binary
 predictions and ROC-AUC/AP from success probabilities. Recompute all reason-group
 errors with unchanged group membership. Reasons do not set individual model weights.
 
+\subsection{Follow-up: controlled year ablation}
+To isolate year from drug knowledge, compare each selected phase's text model
+with an identical pipeline plus training-imputed/standardized start year and a
+missingness indicator. Fix $C$, class weights, and calibration. Evaluate the
+provided validation split and a retrospective temporal diagnostic fitting only
+known-year training rows through 2010 and evaluating 2011--2013. Whole trials
+stay together across phases; unknown-year rows are excluded from temporal cohorts.
+Earlier/later cohort sizes are 835/174, 3,399/541, and 2,651/416 for I/II/III.
+All feature and calibration fits use the earlier cohort only. These 12 additional
+fixed configurations are recorded separately. Because later-cohort labels appeared
+in earlier training/configuration selection, the temporal check is retrospective,
+not an untouched independent test. Original models/submission remain frozen.
+
 \section{Results}
 \subsection{Part 1}
 Table~\ref{tab:initial} shows selected initial settings: K-means uses 10 clusters,
@@ -228,6 +241,21 @@ its n is the unmatched count. Categories overlap. N/A indicates no trials.}
 \label{tab:errors}
 \end{table}
 
+\subsection{Year-only follow-up results}
+Table~\ref{tab:year} isolates the added year block. Supplied-validation loss
+worsens in all phases, increasing equal-phase mean from 0.5738 to 0.5776.
+Temporal loss improves in III but worsens in I/II; its equal-phase mean rises
+from 0.5868 to 0.5903. Temporal false-success rates increase in every phase;
+Phase III rises from 0.7568 to 0.8649 despite better F1 (0.8975 to 0.9057).
+We retain the submitted models and save a separate, unsubmitted year candidate.
+\begin{table}[ht]
+\centering
+\input{part2_year_results}
+\caption{Fixed-model year ablation: log loss, lower is better. Provided uses
+supplied validation; Temporal fits through 2010 and checks 2011--2013.}
+\label{tab:year}
+\end{table}
+
 \section{Discussion}
 \paragraph{Part 1.}
 Clusters need not correspond one-to-one to reasons; local or multi-label variation
@@ -258,8 +286,8 @@ objective and report its subgroup regressions rather than claim uniform improvem
 
 Field-separated clinical features help the selected Phase III model; criteria-only
 features suffice in I/II. The combined knowledge/year block is never selected;
-this joint ablation cannot isolate the individual value of year versus drug
-knowledge. Missing matches, sparse features, and historical associations may
+the subsequent year-only comparison also gives no supplied-validation gain,
+although Phase III improves in the retrospective temporal check. Missing matches, sparse features, and historical associations may
 limit benefit. Small reason groups cannot support strong causal conclusions,
 and most matched reasons are estimates. Category errors and overlapping labels
 can distort group comparisons; unmatched trials are a distinct population, not
@@ -274,8 +302,12 @@ average versus a public-subset aggregate. Temporal shift is a plausible contribu
 not an established cause of the gap; sample composition and selection optimism
 may also contribute. Hidden outcomes prevent full-test or per-phase test
 analysis. Reusing validation for 81 candidate scores
-also creates selection optimism. Training-only temporal evaluation and stability
-across seeds are possible follow-ups, not completed experiments. Source notebooks,
+also creates selection optimism. A retrospective training-only temporal diagnostic has now been performed,
+but prospective temporal model selection and stability across seeds remain
+untested. Temporal-cohort success rates increase from earlier to later rows
+(I 55.6\% to 62.1\%, II 46.0\% to 58.2\%, III 62.6\% to 82.2\%). These
+associations do not measure endpoint strictness and may reflect cohort composition.
+The fixed linear-year experiment does not rule out other useful time representations. Source notebooks,
 all measured tables, prediction/provenance audits, and both submission files are
 retained for reproducibility.
 
