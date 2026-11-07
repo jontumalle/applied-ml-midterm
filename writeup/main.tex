@@ -215,7 +215,7 @@ retain 24.2\% of embedding variance. Source: final Part 1 notebook.}
 \subsection{Supplementary Part 1 experiments}
 A separate approach used RBF kernel PCA to transform the embeddings before
 K-Means clustering (50 components, $\gamma=1/75$). Both steps used all 1,171
-training trials, but only the 157 observed labels determined cluster reason
+training trials, including 1,014 masked trials, but only the 157 observed labels determined cluster reason
 frequencies. Reasons with a cluster frequency of at least 50\% were assigned
 to masked trials; trials with no qualifying reason remained unresolved. Five
 logistic regressions then used the original standardized 150 embeddings.
