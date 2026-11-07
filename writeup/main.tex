@@ -84,14 +84,21 @@ equally. We also compare two regularization settings ($C=0.1$ and $C=1$).
 For final predictions, we assign all reasons with scores of at least 0.5,
 keeping the highest-scoring reason if none qualifies.
 
-The 70-setting initial suite includes supervised controls, 48 cluster-augmented
-settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
-uses minimum frequency 3, up to 3,000 unigrams and sublinear term frequency;
-all transformations fit training only. PCA is diagnostic, not clustering input.
-Four Funding-only threshold controls (0.30/0.20/0.15/0.10) hold the other reasons
-fixed. Twenty-five local-recovery controls compare direct K-NN, K-NN recovery,
-and cluster/local hybrid recovery with $K\in\{3,5,9,15\}$ and uniform/distance
-voting, plus matched supervised LR. This gives 99 evaluated configurations.
+Our initial 70 configurations test whether estimated labels and added features
+improve on classifiers trained only with observed labels. These include 48
+cluster-based configurations and tests that add trial year and text features,
+comparing regularization settings $C\in\{0.1,1,10\}$. We represent text with
+TF-IDF, which gives less weight to words common across trials. We keep up to
+3,000 single-word features that appear in at least three training trials and
+reduce the influence of repeated words within a trial using sublinear term
+frequency. All preprocessing is learned from training data only. We use PCA
+to inspect the embeddings, not as input to clustering. We then test four
+Funding-specific recovery cutoffs (0.30, 0.20, 0.15, and 0.10), leaving the
+other reasons unchanged. Another 25 configurations compare predictions from
+nearby labeled trials, label recovery using those neighbors, and a blend of
+neighbor and cluster scores, alongside a logistic regression control trained
+only on observed labels. We test 3, 5, 9, or 15 neighbors, with either equal
+votes or more weight for closer neighbors. In total, we evaluate 99 configurations.
 
 The selected hybrid equally averages scores from the best 10-cluster model
 and three uniform neighbors among the 157 labeled training trials. Recover
