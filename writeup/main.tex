@@ -45,12 +45,14 @@ Safety, Funding, Efficacy, Recruitment, and Other. Visible labels mostly come
 from older trials: 76\% of labeled trials started before 2005, compared with
 17\% of masked trials. This could make the visible labels less representative
 if stopping reasons change over time.
-Part 2 contains 8,037 training rows, 1,013 validation rows, and 1,500 test rows;
-each row represents a trial phase. The validation set has 149 Phase I rows,
-501 Phase II rows, and 363 Phase III rows. The test set has 500 rows for each
-phase. When a trial appears in more than one phase, all its rows remain in the
-same supplied split. We use trial IDs to match records to give us insights on
-the model's mistakes.
+
+In Part 2, each row represents one phase of a trial. There are 8,037 training
+rows, 1,013 validation rows, and 1,500 test rows. The validation set contains
+149 Phase I rows, 501 Phase II rows, and 363 Phase III rows; the test set has
+500 rows per phase. All rows from the same trial stay together in the training,
+validation, or test set, so we do not evaluate the model on another phase of a
+trial it trained on. We use trial IDs to match records when examining the
+model's mistakes.
 
 Neither outcome training nor calibration uses reason labels, embeddings,
 predictions, or their derived groups.
