@@ -114,7 +114,7 @@ calibration test's historical whole-tree fingerprint assertion is inapplicable
 after integration; nine other behavior tests pass, and saved inference/artifacts
 were independently checked. No original test/source was rewritten to hide this.
 
-The report draft is `reports/final_report.pdf` and `reports/final_report.tex`.
+The report draft is `writeup/main.pdf` and `writeup/main.tex`.
 Fill full team names, confirm each contribution and the AI-disclosure wording,
 and add a verified Part 2 leaderboard result only if available. The assignment
 PDF is absent; requirements were read from `Midterm_Project.tex`. The draft uses
