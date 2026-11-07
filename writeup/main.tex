@@ -99,7 +99,7 @@ Funding-specific recovery cutoffs (0.30, 0.20, 0.15, and 0.10), leaving the
 other reasons unchanged. Another 25 configurations compare predictions from
 nearby labeled trials, label recovery using those neighbors, and a blend of
 neighbor and cluster scores, alongside a logistic regression control trained
-only on observed labels. We test 3, 5, 9, or 15 neighbors, with either equal
+only on observed labels. We test $K\in\{3,5,9,15\}$ neighbors, with either equal
 votes or more weight for closer neighbors. In total, we evaluate 99 configurations.
 
 The selected hybrid equally averages scores from the best 10-cluster model
