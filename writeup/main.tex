@@ -89,8 +89,7 @@ keeping the highest-scoring reason if none qualifies.
 We begin by testing whether labels recovered with K-Means or Gaussian mixture
 models improve logistic regression compared with training only on observed
 labels. We also add trial year and TF-IDF text features to test whether they
-provide useful information beyond the embeddings. Together with the starter
-baseline, these comparisons cover 70 configurations. We use PCA to visualize
+provide useful information beyond the embeddings. We use PCA to visualize
 the embeddings and inspect cluster-level reason frequencies to understand the
 recovered labels. The cluster scores show that no masked trial receives a
 Funding label, motivating four Funding-cutoff settings, including the original
@@ -99,8 +98,8 @@ more Funding cases in validation. We therefore test K-nearest neighbors (K-NN)
 to capture information from nearby labeled trials rather than an entire cluster.
 We compare direct K-NN predictions, K-NN label recovery followed by logistic
 regression, and a blend of K-NN and K-Means scores followed by logistic regression.
-These 25 additional configurations include a matched logistic regression control
-trained only on observed labels, bringing the total to 99.
+We include a matched logistic regression control trained only on observed labels
+to check whether the recovered labels improve performance.
 
 Feature comparisons use $C\in\{0.1,1,10\}$ and text/drug TF-IDF with up to
 3,000 unigrams, minimum document frequency 3, and sublinear term frequency.
