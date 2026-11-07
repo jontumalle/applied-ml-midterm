@@ -104,9 +104,6 @@ information beyond the embeddings, comparing regularization settings
 $C\in\{0.1,1,10\}$. TF-IDF downweights words common across trials, while
 sublinear term frequency reduces the influence of repeated words within a trial.
 We retain up to 3,000 unigrams appearing in at least three training trials.
-All preprocessing is fitted on training data only, so validation and test data
-do not influence the learned feature representation. PCA is used only to inspect
-the embeddings; clustering uses the standardized embeddings directly.
 
 The selected hybrid equally averages scores from the best 10-cluster model
 and three uniform neighbors among the 157 labeled training trials. Recover
