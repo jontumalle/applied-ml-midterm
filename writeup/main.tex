@@ -86,21 +86,19 @@ settings $C\in\{0.1,1\}$ (liblinear, at most 1,000 iterations, seed 42).
 For final predictions, we assign all reasons with scores of at least 0.5,
 keeping the highest-scoring reason if none qualifies.
 
-Our initial comparisons test whether K-Means or Gaussian mixture models can
-recover labels that improve logistic regression, and whether adding trial year
-and TF-IDF text features helps beyond embeddings alone. To understand the
-recovery results, we visualize the embeddings with PCA and examine reason
-frequencies within clusters. The cluster scores fall below the recovery cutoff
-for Funding, leaving no masked trial labeled with that reason. We therefore
-compare lower Funding cutoffs with the original setting. Lowering the cutoff adds false positives without finding
-more Funding cases in validation. We therefore test K-nearest neighbors (K-NN)
-to capture information from nearby labeled trials rather than an entire cluster.
-We compare direct K-NN predictions, K-NN label recovery followed by logistic
-regression, and a blend of K-NN and K-Means scores followed by logistic regression.
-We include a matched logistic regression control trained only on observed labels
-to check whether the recovered labels improve performance.
+We test whether labels recovered with K-Means or Gaussian mixture models improve
+logistic regression over training on observed labels alone. Because recovery
+produces no Funding labels, we inspect PCA plots and reason frequencies within
+clusters to investigate. Funding scores remain below the recovery cutoff, but
+lowering it adds false positives without finding more Funding cases in validation.
+This motivates K-nearest neighbors (K-NN), which uses nearby labeled trials to
+recover reasons at a finer scale than whole clusters. We compare direct K-NN
+predictions, K-NN label recovery followed by logistic regression, and a blend of
+K-NN and K-Means scores followed by logistic regression. A matched logistic
+regression control trained only on observed labels tests whether recovery helps.
 
-Feature comparisons use $C\in\{0.1,1,10\}$ and text/drug TF-IDF with up to
+Separately, we test whether adding trial year and TF-IDF text features improves
+on embeddings alone. Feature comparisons use $C\in\{0.1,1,10\}$ and text/drug TF-IDF with up to
 3,000 unigrams, minimum document frequency 3, and sublinear term frequency.
 All preprocessing is learned from training data only; PCA is used for inspection,
 not clustering input. Funding cutoffs are $\{0.30,0.20,0.15,0.10\}$.
