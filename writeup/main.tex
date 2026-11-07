@@ -74,11 +74,15 @@ models) and observed reason frequency $\pi_j$, the score is
 \begin{equation}
 q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}{\sum_{i\in L}r_{ik}+2}.
 \end{equation}
-Threshold the recovered scores at 0.3 or 0.5; if none crosses, assign the
-highest-scoring reason. Preserve all observed labels. Fit five L2 logistic
-regressions (liblinear, at most 1,000 iterations, seed 42) with $C\in\{0.1,1\}$
-and pseudo-row weight 0.25 or 1. Observed rows have weight 1. Final decisions
-use 0.5 with the same nonempty fallback.
+To fill in masked labels, we assign each reason whose score reaches a threshold
+of 0.3 or 0.5, comparing both settings. If no reason reaches the threshold, we
+assign the highest-scoring reason. We keep all observed labels unchanged. We
+then train one logistic regression classifier per reason, using both observed
+and recovered labels. We compare giving recovered labels either one-quarter
+of the weight of observed labels or equal weight. The classifiers use L2
+regularization with $C\in\{0.1,1\}$, the liblinear solver, at most 1,000
+iterations, and seed 42. For final predictions, we assign reasons with scores
+of at least 0.5; if none qualifies, we again choose the highest-scoring reason.
 
 The 70-setting initial suite includes supervised controls, 48 cluster-augmented
 settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
