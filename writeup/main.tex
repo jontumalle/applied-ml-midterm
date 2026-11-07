@@ -248,19 +248,23 @@ may also contribute to the validation/public gap. The supplementary notebooks
 document these experiments.
 
 \subsection{Part 2 probability and phase metrics}
-The phase prior has validation loss 0.67199. The best criteria model reaches
-0.57375, versus 0.60076 for the best disease/drug/ICD-only setting and 0.58635
-for all text. Larger $C$ reduces training loss but worsens validation loss;
-the winner's training loss is 0.46903. Adding year does not beat it.
-Pooled calibration improves overall loss by only 0.00154 and wins this targeted
-comparison (Table~\ref{tab:overall}). Phase-specific calibration improves Phase III
-more but worsens Phase I and overall loss relative to pooled calibration
-(Table~\ref{tab:phases}). Positive sigmoid slopes preserve within-phase rankings,
-so ROC-AUC/AP remain unchanged; the fixed-threshold F1 can move.
+Eligibility criteria provide the strongest text representation: validation log
+loss is 0.57375, compared with 0.60076 for diseases/drugs/ICD codes, 0.58635
+for all text, and 0.67199 for the phase-success-rate baseline. Adding year does
+not improve on criteria alone. Larger $C$ lowers training loss but worsens
+validation loss, suggesting overfitting; the selected model's training loss is
+0.46903.
+
+Pooled sigmoid calibration reduces overall loss by 0.00154
+(Table~\ref{tab:overall}). Separate phase calibrators improve Phase III more,
+but worsen Phase I and overall loss compared with pooled calibration
+(Table~\ref{tab:phases}). The fitted sigmoids have positive slopes, so they
+preserve the ordering of predictions within each phase. ROC-AUC and AP therefore
+stay unchanged, although F1 can change when probabilities cross the 0.5 cutoff.
 \begin{table}[t]
 \centering\small\input{tables/overall}
-\caption{Part 2 validation. Raw: original model; Pool/Phase: pooled or phase-specific
-sigmoid. Phase mean weights all phases equally.}
+\caption{Part 2 validation. Raw: uncalibrated model; Pool/Phase: pooled or
+phase-specific sigmoid calibration. Phase mean weights phases equally.}
 \label{tab:overall}
 \end{table}
 \begin{table}[t]
@@ -269,38 +273,44 @@ sigmoid. Phase mean weights all phases equally.}
 \label{tab:phases}
 \end{table}
 
-Phase III is not broadly overconfident: raw mean success probability is 66.05\%
-versus 66.12\% observed. Among 79 predictions at least 0.8, mean probability is
-85.80\% versus 92.41\% observed success, indicating underconfidence there.
-The 0.4--0.5 bin overpredicts (45.21\% versus 26.47\%, $n=34$), so calibration
-is mixed (Figure~\ref{fig:reliability}). Pooled Brier improves from 0.19547 to
-0.19493 overall and 0.18089 to 0.18019 in Phase III. The selected calibrated
-model achieves a Kaggle leaderboard log loss of 0.59854, compared with
-row-weighted validation loss 0.57221 and equal-phase validation loss 0.56624.
+Phase III shows why one adjustment may not help every probability range
+(Figure~\ref{fig:reliability}). Before calibration, mean predicted success is
+66.05\%, close to the observed 66.12\%. Yet the 79 predictions of at least 0.8
+average 85.80\% against 92.41\% observed success, understating success in that
+group. The 0.4--0.5 range instead overstates it: 45.21\% predicted versus
+26.47\% observed ($n=34$).
+
+Pooled calibration improves the Brier score, the mean squared probability error,
+from 0.19547 to 0.19493 overall and from 0.18089 to 0.18019 in Phase III.
+The selected calibrated model achieves Kaggle log loss of 0.59854, compared
+with validation loss of 0.57221 when rows are weighted equally and 0.56624
+when phases are weighted equally.
 \begin{figure}[t]
 \centering\includegraphics[width=.95\linewidth]{phase3_reliability.pdf}
-\caption{Phase III reliability from fixed ten-bin validation summaries. Sparse
-bins are noisy; the diagonal denotes perfect calibration. Source: build\_tables.py.}
+\caption{Phase III predicted versus observed success in ten validation bins.
+Small bins are uncertain; the diagonal indicates agreement. Source: build\_tables.py.}
 \label{fig:reliability}
 \end{figure}
 
 \subsection{Reason coverage and errors}
-Hybrid pseudo-labels are available for 131 phase rows (113 unique trials)
-whose reasons were masked; these labels remain estimates. Among 452 unsuccessful phase rows
-(398 trials), 27 use true reasons, 171 predicted reasons and 254 have no Part 1
-record. Reason estimates are available for all matched records.
+The hybrid supplies estimated reasons for 131 phase rows (113 unique trials)
+whose reasons were masked. Among the 452 failed phase rows (398 trials), 27
+have observed reasons, 171 have predicted reasons, and 254 have no Part 1
+record. Every matched record has reasons available, but most are estimates.
 \begin{table}[t]
 \centering\small\setlength{\tabcolsep}{3pt}\input{tables/reason_errors}
-\caption{Unsuccessful-trial groups. T/P: true/predicted reason counts;
-Raw/Pool: false-success fractions before/after pooled calibration. No record
-counts are absent records, not T/P. Groups overlap; -- means undefined.}
+\caption{Failed-trial groups. T/P: observed/predicted reason counts;
+Raw/Pool: fractions incorrectly predicted successful before/after pooled
+calibration. No record means no Part 1 match. Groups overlap; -- means undefined.}
 \label{tab:reasons}
 \end{table}
-Phase II Recruitment improves from 18/93 false successes to 15/93, and Phase III
-no record from 53/82 to 52/82. Phase III Efficacy stays 7/8, all with predicted
-reasons; Phase I Efficacy stays 3/4. These small reason groups do not support
-strong rankings or causal explanations. The complete audit also retains mean
-predicted probabilities and the phase-specific calibration comparison.
+Calibration reduces incorrect success predictions from 18/93 to 15/93 among
+Phase II Recruitment failures, and from 53/82 to 52/82 in the Phase III no-record
+group. However, it still predicts success for 7/8 Phase III Efficacy failures
+and 3/4 Phase I Efficacy failures. All Phase III Efficacy reasons are predicted,
+and these small groups cannot establish which reasons are hardest to model or
+why errors occur. The complete audit also records mean predicted probabilities
+and results from phase-specific calibration.
 
 \section{Discussion}
 \paragraph{Complementary but separate tasks.}
