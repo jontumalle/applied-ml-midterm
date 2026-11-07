@@ -314,37 +314,43 @@ and results from phase-specific calibration.
 
 \section{Discussion}
 \paragraph{Complementary but separate tasks.}
-Coarse cluster averages can suppress rare reasons or promote entire mixed
-clusters. Local neighbors provide more specific evidence; their equal blend
-with the unsupervised component helped sample F1 here. Quarter-weight pseudo-labels
-limit but do not remove labeling errors. PCA cannot establish high-dimensional
-separation, and extra sparse text/drug knowledge may add noise with only 157
-trusted labels. The final hybrid's 99-setting selection and only four Funding
-validation positives limit certainty.
+Cluster averages can hide rare reasons, while lower cutoffs may assign a reason
+to an entire mixed cluster. K-NN provides more local evidence; blending it with
+K-Means improved sample F1 here. Giving recovered labels weight 0.25 limits their
+influence but does not correct wrong labels. With only 157 observed labels,
+extra text/drug features may add noise, and a PCA plot cannot establish separation
+in the full embedding space. Repeated model selection and only four Funding
+validation positives make small improvements uncertain.
 
-Outcome calibration changes probabilities rather than vocabulary or rankings.
-Its small loss gain is not evidence of statistical significance. A high
-false-success fraction among failures alone does not establish overconfidence;
-calibration must consider all validation outcomes. The reason audit exposes
-persistent subgroup errors despite improved aggregate loss. Coverage is complete
-for recorded Part 1 trials, but most matched reason labels are estimates;
-misclassification and overlapping groups can distort comparisons. No-record
-trials may include completed failures, not merely trials with missing explanations.
+For Part 2, sigmoid calibration adjusts confidence while preserving rankings
+within each phase. The small loss improvement does not establish statistical
+significance, and persistent reason-group errors show that better overall
+probabilities do not guarantee fewer mistakes everywhere. Nor does a high error
+rate among failed trials alone prove overconfidence: calibration compares
+predicted probabilities with outcomes across both successes and failures.
+Most matched stopping reasons are estimates, and errors in those labels or
+overlapping groups can affect the comparisons. Trials without a Part 1 record
+may have completed unsuccessfully rather than stopped early; missing records
+do not simply mean missing explanations.
 
 \paragraph{Temporal and selection limitations.}
-Observed train/validation start years end in 2013; test years are 2014--2021.
-Training has 21 missing years, validation six. Historical vocabulary, treatment
-mix and success rates may change. Random-by-trial validation does not measure
-later-year performance. Kaggle log loss is 0.02633 higher than row-weighted
-validation loss and 0.03230 higher than equal-phase validation loss. This gap
-is consistent with temporal shift and validation selection optimism, although
-the leaderboard score alone cannot distinguish their contributions.
-Reusing validation for 37 outcome settings and
-two calibrators creates selection optimism. Seven training/validation eligibility
-texts match exactly, despite disjoint IDs, which may also make validation easier.
-Combined-phase rows are correlated, and per-phase sample sizes differ. We report
-row and phase-macro losses distinctly. A temporal holdout and repeated-seed checks
-are future work, not completed experiments.
+Part 2 training and validation trials with known start years begin no later than
+2013, while test trials begin in 2014--2021; 21 training rows and six validation
+rows have missing years. Changes in vocabulary, treatments, and success rates
+may reduce performance on later trials. Because validation is split randomly
+by trial, it does not directly test this transfer to later years. Kaggle log
+loss is 0.02633 above row-weighted validation loss and 0.03230 above the
+equal-phase mean. Differences in trial years and repeated validation-based
+model selection could contribute, but the leaderboard score cannot show how
+much each explains.
+
+Repeatedly choosing models and calibrators on the same validation set may make
+its scores optimistic. Seven eligibility texts also match exactly across
+training and validation despite different trial IDs, which may make validation
+easier. Rows from different phases of one trial are related, and phase sizes
+differ, so we distinguish row-weighted from equal-phase loss. A later-year
+holdout and checks across random seeds would strengthen the evaluation; neither
+is part of the reported experiments.
 
 \begin{thebibliography}{9}
 \bibitem{assignment} Cornell CS5785 / ORIE5750 / ECE5414 course staff.
