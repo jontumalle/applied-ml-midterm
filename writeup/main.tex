@@ -176,16 +176,21 @@ rates for empty groups are undefined.
 \caption{Initial Part 1 validation F1 by reason and method.}
 \label{tab:p1}
 \end{table}
-The initial cluster methods underperform supervised controls
-(Table~\ref{tab:p1}). Added year/text features do not improve initial augmented
-models (Table~\ref{tab:p1features}); this does not establish that all text or chemistry features are unhelpful. Funding's maximum smoothed cluster score is 0.2051, below 0.3; lowering
-its threshold adds 112 pseudo-positives but drops sample F1 from 0.8547 to
-0.8419 through false positives because an entire mixed cluster is promoted. The hybrid instead recovers 16 Funding positives
-and identifies 2/4 Funding validation positives without false positives. It wins
-sample F1 0.88675; K-NN-only recovery has higher macro F1 0.78730. The recorded
-hybrid public Kaggle F1 is 0.87927~\cite{artifacts}; it is a leaderboard score,
-not a fully labeled test evaluation. No fitted Part 1 model file is saved, but
-recovered labels, validation/test predictions and source are available.
+The initial clustering methods perform worse than models trained only on
+observed labels (Table~\ref{tab:p1}). Adding year and text does not improve these
+methods (Table~\ref{tab:p1features}), although this does not rule out other text
+or chemistry representations. Funding illustrates a weakness of cluster-based
+recovery: its highest smoothed score is 0.2051, below the 0.3 cutoff. Lowering
+the cutoff assigns Funding to 112 masked trials in a mixed cluster, adding
+false positives and reducing sample F1 from 0.8547 to 0.8419.
+
+The hybrid recovers 16 Funding labels and correctly identifies 2/4 Funding
+validation cases without false positives. It achieves the best sample F1 of
+0.88675, while K-NN-only recovery has the higher macro F1 of 0.78730
+(Table~\ref{tab:p1knn}). The hybrid's recorded public Kaggle F1 is
+0.87927~\cite{artifacts}, measured on the leaderboard subset rather than the
+full test set. The source, recovered labels, and validation/test predictions
+are available, but no fitted Part 1 model file was saved.
 
 \begin{table}[t]
 \centering\small
@@ -202,43 +207,45 @@ recovered labels, validation/test predictions and source are available.
 
 \begin{figure}[t]
 \centering\includegraphics[width=\linewidth]{part1_pca_clusters.pdf}
-\caption{Existing training-only PCA diagnostic for Part 1; the first two PCs
-retain only 24.2\% of embedding variance. Source: final Part 1 notebook.}
+\caption{Training-only PCA visualization for Part 1. The first two components
+retain 24.2\% of embedding variance. Source: final Part 1 notebook.}
 \label{fig:pca}
 \end{figure}
 
 \subsection{Supplementary Part 1 experiments}
-Our first route fitted RBF kernel PCA (50 components, $\gamma=1/75$) and
-K-Means on all 1,171 training embeddings, including the 1,014 masked trials.
-Only the 157 observed labels determined each cluster's five reason percentages.
-We assigned reasons reaching a 50\% cluster rate to masked members and left
-clusters with no qualifying reason unresolved. Five logistic regressions then
-used the original scaled 150 embeddings, not the kernel-PCA coordinates.
-Sweeping 2--30 clusters, the 21-cluster model reached validation sample/macro
-F1 of 0.8880/0.7272, versus a reported public score of about 0.82.
+A separate approach used RBF kernel PCA to transform the embeddings before
+K-Means clustering (50 components, $\gamma=1/75$). Both steps used all 1,171
+training trials, but only the 157 observed labels determined cluster reason
+frequencies. Reasons with a cluster frequency of at least 50\% were assigned
+to masked trials; trials with no qualifying reason remained unresolved. Five
+logistic regressions then used the original standardized 150 embeddings.
+Among 2--30 clusters, the 21-cluster model reached validation sample/macro F1
+of 0.8880/0.7272, with a reported public score of about 0.82.
 
-We next blended smoothed cluster rates with votes from three originally labeled
-neighbors, equally weighted, for Safety, Funding and Other. At a 0.30 recovery
-threshold, their masked labels entered training at weight 0.25; observed labels
-were never changed. Efficacy and Recruitment retained cluster-only labels,
-leaving 520 masked rows unresolved for each at 14 clusters. The 21-cluster
-selective model reached 0.8932/0.7752 validation F1 and 0.84508 reported
-public F1. At 14 clusters, stronger Safety regularization raised validation
-F1 to 0.9231/0.8291, yet public F1 was only about 0.84 (rounded).
+To add local evidence, we equally blended smoothed cluster scores with votes
+from three observed-label neighbors for Safety, Funding, and Other. We recovered
+these labels at a 0.30 cutoff and gave them training weight 0.25, preserving
+observed labels. Efficacy and Recruitment still used cluster-only recovery;
+with 14 clusters, 520 masked rows remained unresolved for each reason. With
+21 clusters, the selective blend reached validation sample/macro F1 of
+0.8932/0.7752 and reported public F1 of 0.84508. With 14 clusters, stronger
+Safety regularization raised validation F1 to 0.9231/0.8291, but public F1
+was only about 0.84 (rounded).
 
-Adding a cluster-argmax fallback for the 520 unresolved rows labeled every one
-Recruitment and reduced Efficacy validation F1 from 0.9333 to 0.1333. A
-three-neighbor fallback was less damaging but still reduced Efficacy and
-Recruitment F1 to 0.7742 and 0.9091. In a controlled comparison, replacing
-only the selected team's raw-embedding clustering with kernel PCA lowered
-validation sample/macro F1 from 0.8868/0.7792 to 0.8739/0.7739; none of
-20--150 kernel-PCA components beat the raw representation. The team's selected
-all-reason hybrid retained the stronger recorded public F1 of 0.87927.
-Kernel projections may lose reason-aligned structure and class-specific
-pseudo-labels may add errors; without test labels, neither explanation is
-established.
-Repeated choices on 78 validation trials and later test years may also explain
-the validation/public gap. The supplementary notebooks document these trials.
+Assigning the highest-scoring cluster reason to the 520 unresolved rows gave
+every row a Recruitment label and reduced Efficacy validation F1 from 0.9333
+to 0.1333. A three-neighbor fallback was less harmful, but still reduced Efficacy
+and Recruitment F1 to 0.7742 and 0.9091. To isolate the effect of kernel PCA,
+we changed only the clustering representation in the selected hybrid. Validation
+sample/macro F1 fell from 0.8868/0.7792 to 0.8739/0.7739; none of the tested
+20--150 components improved on the original embeddings. The selected all-reason
+hybrid had the stronger recorded public F1 of 0.87927.
+
+Kernel PCA may discard useful distinctions between reasons, and estimated labels
+may introduce errors. Neither explanation is established by these results.
+Repeated model selection on 78 validation trials and differences in trial years
+may also contribute to the validation/public gap. The supplementary notebooks
+document these experiments.
 
 \subsection{Part 2 probability and phase metrics}
 The phase prior has validation loss 0.67199. The best criteria model reaches
