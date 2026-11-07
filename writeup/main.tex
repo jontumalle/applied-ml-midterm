@@ -21,12 +21,12 @@ We study how to predict clinical-trial stopping reasons and outcomes using
 semi-supervised learning and calibrated classification. For five overlapping
 stopping reasons, a hybrid of K-Means and three-nearest neighbors, followed by
 weighted logistic regression, achieves a validation sample F1 of 0.88675 and
-macro F1 of 0.77923. Its public Kaggle leaderboard F1 is 0.87927. To predict
+macro F1 of 0.77923. Its public Kaggle F1 score is 0.87927. To predict
 trial success, we use pooled logistic regression
 with eligibility-text TF-IDF features and phase encoding. It achieves a validation
 log loss of 0.57375. Sigmoid calibration reduces this to 0.57221; the calibration
 uses only training data and groups observations by trial. The calibrated model
-achieves a Kaggle leaderboard log loss of 0.59854. Using predicted stopping
+achieves a Kaggle log loss score of 0.59854. Using predicted stopping
 reasons, we could examine errors for every trial that appeared in both parts of the
 study. In some small groups of trials, the model often predicted success when the
 trials had actually failed. These results may not hold as well for other trials
@@ -222,7 +222,9 @@ versus 66.12\% observed. Among 79 predictions at least 0.8, mean probability is
 85.80\% versus 92.41\% observed success, indicating underconfidence there.
 The 0.4--0.5 bin overpredicts (45.21\% versus 26.47\%, $n=34$), so calibration
 is mixed (Figure~\ref{fig:reliability}). Pooled Brier improves from 0.19547 to
-0.19493 overall and 0.18089 to 0.18019 in Phase III. No leaderboard score is recorded for the selected calibrated model: \todo{add a verified score and submission identity if available}.
+0.19493 overall and 0.18089 to 0.18019 in Phase III. The selected calibrated
+model achieves a Kaggle leaderboard log loss of 0.59854, compared with
+row-weighted validation loss 0.57221 and equal-phase validation loss 0.56624.
 \begin{figure}[t]
 \centering\includegraphics[width=.95\linewidth]{phase3_reliability.pdf}
 \caption{Phase III reliability from fixed ten-bin validation summaries. Sparse
@@ -271,8 +273,11 @@ trials may include completed failures, not merely trials with missing explanatio
 Observed train/validation start years end in 2013; test years are 2014--2021.
 Training has 21 missing years, validation six. Historical vocabulary, treatment
 mix and success rates may change. Random-by-trial validation does not measure
-later-year performance; the retained model has no recorded leaderboard result
-with which to quantify that gap. Reusing validation for 37 outcome settings and
+later-year performance. Kaggle log loss is 0.02633 higher than row-weighted
+validation loss and 0.03230 higher than equal-phase validation loss. This gap
+is consistent with temporal shift and validation selection optimism, although
+the leaderboard score alone cannot distinguish their contributions.
+Reusing validation for 37 outcome settings and
 two calibrators creates selection optimism. Seven training/validation eligibility
 texts match exactly, despite disjoint IDs, which may also make validation easier.
 Combined-phase rows are correlated, and per-phase sample sizes differ. We report
