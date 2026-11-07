@@ -59,8 +59,9 @@ predictions, or their derived groups.
 
 \subsection{Part 1: recovery and classification}
 We standardize the 150 reason-embedding features using all training trials,
-then group trials with similar embeddings. We compare K-Means with 5, 10, or
-20 clusters against Gaussian mixture models with diagonal covariance matrices.
+then group trials with similar embeddings. We compare K-Means and Gaussian
+mixture models with $K\in\{5,10,20\}$ clusters. The mixture models use diagonal
+covariance matrices.
 K-Means uses k-means++ initialization, 10 starts, a tolerance of $10^{-4}$,
 at most 300 iterations, and seed 42. The mixture models use three starts,
 a tolerance of $10^{-3}$, at most 200 iterations, and covariance regularization
