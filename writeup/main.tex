@@ -96,13 +96,17 @@ recover reasons at a finer scale than whole clusters. We compare direct K-NN
 predictions, K-NN label recovery followed by logistic regression, and a blend of
 K-NN and K-Means scores followed by logistic regression. A matched logistic
 regression control trained only on observed labels tests whether recovery helps.
+The Funding comparison uses cutoffs $\{0.30,0.20,0.15,0.10\}$; K-NN uses
+$K\in\{3,5,9,15\}$ with uniform or distance-weighted votes.
 
-Separately, we test whether adding trial year and TF-IDF text features improves
-on embeddings alone. Feature comparisons use $C\in\{0.1,1,10\}$ and text/drug TF-IDF with up to
-3,000 unigrams, minimum document frequency 3, and sublinear term frequency.
-All preprocessing is learned from training data only; PCA is used for inspection,
-not clustering input. Funding cutoffs are $\{0.30,0.20,0.15,0.10\}$.
-Neighbor comparisons use $K\in\{3,5,9,15\}$ with uniform or distance-weighted votes.
+Separately, we test whether trial year and TF-IDF text features add useful
+information beyond the embeddings, comparing regularization settings
+$C\in\{0.1,1,10\}$. TF-IDF downweights words common across trials, while
+sublinear term frequency reduces the influence of repeated words within a trial.
+We retain up to 3,000 unigrams appearing in at least three training trials.
+All preprocessing is fitted on training data only, so validation and test data
+do not influence the learned feature representation. PCA is used only to inspect
+the embeddings; clustering uses the standardized embeddings directly.
 
 The selected hybrid equally averages scores from the best 10-cluster model
 and three uniform neighbors among the 157 labeled training trials. Recover
