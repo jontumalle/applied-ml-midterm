@@ -150,6 +150,30 @@ retain only 24.2\% of embedding variance. Source: final Part 1 notebook.}
 \label{fig:pca}
 \end{figure}
 
+\subsection{Supplementary Part 1 experiments}
+We also tried RBF kernel PCA (50 components, $\gamma=1/75$) before K-Means
+recovery across 2--30 clusters. At 21 clusters it reached validation
+sample/macro F1 of 0.8880/0.7272, but its reported public score was about
+0.82.
+Next, we blended smoothed cluster rates with three labeled neighbors for
+Safety, Funding and Other, retaining cluster-only Efficacy and Recruitment.
+With a 0.30 recovery threshold and 0.25 pseudo-label weight, the 21-cluster
+version scored 0.8932/0.7752 on validation and 0.84508 publicly. A 14-cluster
+version with stronger Safety regularization rose to 0.9231/0.8291 on
+validation but scored only about 0.84 publicly. These personal public scores
+were reported from submissions, with the latter rounded.
+
+Holding the selected team's hybrid fixed except for clustering, kernel PCA
+reduced validation sample/macro F1 to 0.8739/0.7739. Filling our selective
+model's unresolved Efficacy and Recruitment training labels by cluster argmax
+or nearest neighbors also reduced validation F1. The selected all-reason hybrid
+retained the stronger recorded public score of 0.87927. Kernel projections may
+discard reason-aligned structure, and uncertain class-specific pseudo-labels can
+add errors. Repeated choices on 78 validation trials and later test years may
+also explain the validation/public gap; these comparisons cannot isolate one
+cause. The supplementary notebooks document the K-Means and kernel-PCA
+comparisons.
+
 \subsection{Part 2 probability and phase metrics}
 The phase prior has validation loss 0.67199. The best criteria model reaches
 0.57375, versus 0.60076 for the best disease/drug/ICD-only setting and 0.58635
