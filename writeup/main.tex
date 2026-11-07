@@ -86,21 +86,25 @@ settings $C\in\{0.1,1\}$ (liblinear, at most 1,000 iterations, seed 42).
 For final predictions, we assign all reasons with scores of at least 0.5,
 keeping the highest-scoring reason if none qualifies.
 
-Our initial 70 configurations test whether estimated labels and added features
-improve on classifiers trained only with observed labels. These include 48
-cluster-based configurations and tests that add trial year and text features,
-comparing regularization settings $C\in\{0.1,1,10\}$. We represent text with
-TF-IDF, which gives less weight to words common across trials. We keep up to
-3,000 single-word features that appear in at least three training trials and
-reduce the influence of repeated words within a trial using sublinear term
-frequency. All preprocessing is learned from training data only. We use PCA
-to inspect the embeddings, not as input to clustering. We then test four
-Funding-specific recovery cutoffs (0.30, 0.20, 0.15, and 0.10), leaving the
-other reasons unchanged. Another 25 configurations compare predictions from
-nearby labeled trials, label recovery using those neighbors, and a blend of
-neighbor and cluster scores, alongside a logistic regression control trained
-only on observed labels. We test $K\in\{3,5,9,15\}$ neighbors, with either equal
-votes or more weight for closer neighbors. In total, we evaluate 99 configurations.
+We begin by testing whether cluster-based label recovery improves on classifiers
+trained only with observed labels. We also test whether adding trial year and
+text provides useful information beyond the embeddings. Together with the
+starter baseline, these comparisons cover 70 configurations. Inspection of the
+cluster scores shows that no masked trial receives a Funding label. We therefore
+test four lower-cutoff settings for Funding, including the original cutoff as
+a control, while leaving the other reasons unchanged. Lowering the cutoff adds
+false positives without finding more Funding cases in validation. This motivates
+a more local approach: using nearby labeled trials rather than assigning reasons
+from an entire cluster. We compare direct neighbor predictions, neighbor-based
+label recovery, and a blend of neighbor and cluster scores. These 25 additional
+configurations include a matched observed-label-only classifier, bringing the
+total to 99.
+
+Feature comparisons use $C\in\{0.1,1,10\}$ and text/drug TF-IDF with up to
+3,000 unigrams, minimum document frequency 3, and sublinear term frequency.
+All preprocessing is learned from training data only; PCA is used for inspection,
+not clustering input. Funding cutoffs are $\{0.30,0.20,0.15,0.10\}$.
+Neighbor comparisons use $K\in\{3,5,9,15\}$ with uniform or distance-weighted votes.
 
 The selected hybrid equally averages scores from the best 10-cluster model
 and three uniform neighbors among the 157 labeled training trials. Recover
