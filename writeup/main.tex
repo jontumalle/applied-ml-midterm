@@ -65,8 +65,10 @@ K-Means uses k-means++ initialization, 10 starts, a tolerance of $10^{-4}$,
 at most 300 iterations, and seed 42. The mixture models use three starts,
 a tolerance of $10^{-3}$, at most 200 iterations, and covariance regularization
 of $10^{-5}$. We use the labeled trials in each cluster to estimate a score
-for each stopping reason. We smooth these scores toward each reason's frequency
-among all labeled training trials, reducing the influence of small clusters.
+for each stopping reason. We smooth these scores by combining the cluster's
+labeled examples with how common each reason is across all labeled training
+trials. This prevents a cluster with very few labeled examples from producing
+extreme scores based on those examples alone.
 For trial $i$'s cluster membership $r_{ik}$ (hard for K-Means, soft for mixture
 models) and observed reason frequency $\pi_j$, the score is
 \begin{equation}
