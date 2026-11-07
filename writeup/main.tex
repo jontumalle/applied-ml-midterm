@@ -54,8 +54,8 @@ validation, or test set, so we do not evaluate the model on another phase of a
 trial it trained on. We use trial IDs to match records when examining the
 model's mistakes.
 
-Neither outcome training nor calibration uses reason labels, embeddings,
-predictions, or their derived groups.
+We use stopping reasons only to examine the outcome model's mistakes. They are
+not inputs to the model or to the step that adjusts its predicted probabilities.
 
 \subsection{Part 1: recovery and classification}
 Standardize the 150 reason embeddings on all training rows. Fit K-Means with
