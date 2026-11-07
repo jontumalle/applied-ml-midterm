@@ -81,8 +81,8 @@ with the unchanged observed labels to train one logistic regression classifier
 per reason. Because estimated labels can be wrong, we test whether giving them
 one-quarter of the influence of observed labels works better than treating both
 equally. We also compare two regularization settings ($C=0.1$ and $C=1$).
-For final predictions, each classifier uses a cutoff of 0.5, again keeping the
-highest-scoring reason if none qualifies.
+For final predictions, we assign all reasons with scores of at least 0.5,
+keeping the highest-scoring reason if none qualifies.
 
 The 70-setting initial suite includes supervised controls, 48 cluster-augmented
 settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
