@@ -79,9 +79,10 @@ We use the cluster scores to fill in missing stopping reasons, comparing cutoffs
 of 0.3 and 0.5. A trial receives every reason that meets the cutoff, or its
 highest-scoring reason if none qualifies. We then combine these estimated labels
 with the unchanged observed labels to train one logistic regression classifier
-per reason. Because estimated labels can be wrong, we test whether giving them
-one-quarter of the influence of observed labels works better than treating both
-equally. We also compare two regularization settings ($C=0.1$ and $C=1$).
+per reason. Because estimated labels can be wrong, we compare weights
+$w\in\{0.25,1\}$ for them, keeping observed-label weight at 1. The lower weight
+limits their influence on classifier training. We compare L2 regularization
+settings $C\in\{0.1,1\}$ (liblinear, at most 1,000 iterations, seed 42).
 For final predictions, we assign all reasons with scores of at least 0.5,
 keeping the highest-scoring reason if none qualifies.
 
