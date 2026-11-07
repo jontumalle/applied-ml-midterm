@@ -115,43 +115,58 @@ K-Means, Gaussian mixture models, and feature construction use scikit-learn
 implementations~\cite{clustering,tfidf}.
 
 \subsection{Part 2: fixed model and controlled experiments}
-First predict each phase's training success prior. Compare 36 LR settings:
-three text sets (criteria; diseases/drugs/ICD; all four), $C=0.1/1/10$, year
-on/off, and pooled versus independent phase models. Safely parse list-valued
-text; missing text becomes empty. Each field has training-fitted unigram/bigram
-TF-IDF with minimum frequency 3, sublinear TF, L2 normalization, at most 15,000
-criteria features or 5,000 per other field. Pooled models include one-hot phase;
-per-phase models fit independent transforms. Year uses training-median imputation,
-missingness indicators and scaling. LR uses liblinear, tolerance $10^{-5}$,
-at most 2,000 iterations and seed 5785, without class weights.
+We first use each phase's training success rate as a baseline. To learn from
+trial descriptions, we compare logistic regression with three TF-IDF feature
+sets: eligibility criteria, diseases/drugs/ICD codes, and all four fields.
+We test $C\in\{0.1,1,10\}$, with and without trial year, and compare a pooled
+model that includes phase with separate models for each phase. This tests whether
+sharing information across phases works better than learning them independently.
 
-Select minimum overall validation log loss without a validation refit. The winner
-uses criteria plus phase, pooled $C=1$, no year. Overall validation loss is
-row-weighted; report equal-phase mean separately because test phases are balanced.
-F1 uses probability $\geq0.5$; ROC-AUC and average precision (AP) use success
-probabilities. AP is not trapezoidal PR area.
+Each text field uses training-fitted unigram/bigram TF-IDF with minimum document
+frequency 3, sublinear TF, and L2 normalization. We cap criteria features at
+15,000 and other fields at 5,000 each, parse list-valued fields, and treat missing
+text as empty. The pooled model uses one-hot phase encoding; separate models
+learn their own text representations. We fill missing years with the training
+median, flag missing values, and scale year. Logistic regression uses liblinear,
+tolerance $10^{-5}$, at most 2,000 iterations, and seed 5785, without class weights.
+
+We select the lowest overall validation log loss and do not refit on validation
+data. The selected model pools phases, using criteria TF-IDF and phase encoding
+with $C=1$, without year. Overall loss gives each row equal weight; we also report
+an equal-phase mean because the test set has the same number of rows per phase.
+F1 uses a success-probability cutoff of 0.5. ROC-AUC and average precision (AP)
+use the probabilities directly; AP is our PR-AUC measure, not trapezoidal PR area.
 
 \subsection{Training-only probability calibration}
-Generate exactly one out-of-fold margin for every training row using five
-shuffled StratifiedGroupKFold folds, grouping by trial ID and approximately
-balancing phase/outcome strata (seed 5785). Each fold refits the same TF-IDF,
-phase encoding and $C=1$ LR on its fit rows. Fit an unpenalized two-parameter
-sigmoid to these OOF margins/labels, either pooled or independently by phase.
-The calibrator never sees validation labels. At inference, transform margins
-from the original full-training base model; this is not a fold ensemble.
-OOF models see roughly 80\% of training rows, so a margin-distribution mismatch
-with the full base remains possible. Sigmoid calibration follows the standard
-probability-calibration formulation~\cite{calibration}.
+Sigmoid calibration adjusts the model's probability estimates without changing
+its text features. To learn this adjustment without validation labels, we use
+five shuffled StratifiedGroupKFold folds (seed 5785), keeping each trial's rows
+together and approximately balancing phase/outcome groups. Each fold refits
+TF-IDF, phase encoding, and $C=1$ logistic regression on its training portion,
+then scores the held-out portion. Every training row therefore receives one
+out-of-fold decision score from a model that did not train on it.
+
+We fit an unpenalized two-parameter sigmoid to these scores and their true
+outcomes, comparing one pooled calibrator with separate calibrators per phase.
+For final predictions, the sigmoid adjusts scores from the model fitted on all
+training data; we do not average the fold models. Since each fold model sees
+roughly 80\% of the training rows, its score distribution may differ from that
+of the full model, limiting how well the adjustment transfers. We use the
+standard sigmoid calibration formulation~\cite{calibration}.
 
 \subsection{Reason-based outcome error analysis}
-For outcome failures only ($y=0$), join Part 2 trial\_id to Part 1 ID. Use visible
-train/validation reasons first. Otherwise use the final hybrid's saved masked-train
-pseudo-labels or test predictions. Absent Part 1 records form a distinct
-no-record group; masked/prediction-unavailable rows are not negative reasons.
-A multi-label trial contributes to every positive reason, once within each phase.
-For each phase/group compute count, false-success count/fraction and mean success
-probability, retaining truth/prediction provenance. Compare the same group
-membership before/after calibration. Empty groups have undefined rates.
+To examine where the outcome model predicts success incorrectly, we take failed
+trials ($y=0$) and match Part 2 trial\_id to Part 1 ID. We use observed reasons
+where available; otherwise, we use the final hybrid's recovered training labels
+or test predictions. Trials without a Part 1 record form a separate no-record
+group. Missing or unavailable reasons are not treated as negative labels.
+
+Within each phase and reason group, we report the number of failed trials, the
+number and fraction incorrectly predicted successful, and the mean predicted
+success probability. We distinguish observed from predicted reasons and keep
+group membership fixed when comparing results before and after calibration.
+A trial with several reasons contributes to each relevant group once per phase;
+rates for empty groups are undefined.
 
 \section{Results}
 \subsection{Part 1}
