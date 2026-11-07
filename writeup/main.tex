@@ -27,9 +27,9 @@ log loss of 0.57375. Sigmoid calibration reduces this to 0.57221; the calibratio
 uses only training data and groups observations by trial. Using predicted stopping
 reasons, we could examine errors for every trial that appeared in both parts of the
 study. In some small groups of trials, the model often predicted success when the
-trials had actually failed. Temporal shift, errors in predicted reasons, and repeated
-model selection on the validation set limit how broadly we can generalize these
-results.
+trials had actually failed. These results may not hold as well for trials from
+different time periods, because predicted reasons can be wrong, or because we
+used the same validation set repeatedly to choose models.
 \end{abstract}
 
 \section{Methods}
