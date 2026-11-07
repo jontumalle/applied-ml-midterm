@@ -58,11 +58,17 @@ Neither outcome training nor calibration uses reason labels, embeddings,
 predictions, or their derived groups.
 
 \subsection{Part 1: recovery and classification}
-Standardize the 150 reason embeddings on all training rows. Fit K-Means with
-$K\in\{5,10,20\}$, k-means++ initialization, 10 starts, tolerance $10^{-4}$,
-300 iterations and seed 42. Compare diagonal GMMs with three starts, tolerance
-$10^{-3}$, 200 iterations and covariance regularization $10^{-5}$.
-For hard/soft membership $r_{ik}$ and observed reason prior $\pi_j$, estimate
+We standardize the 150 reason-embedding features using all training trials,
+then group trials with similar embeddings. We compare K-Means with 5, 10, or
+20 clusters against Gaussian mixture models with diagonal covariance matrices.
+K-Means uses k-means++ initialization, 10 starts, a tolerance of $10^{-4}$,
+at most 300 iterations, and seed 42. The mixture models use three starts,
+a tolerance of $10^{-3}$, at most 200 iterations, and covariance regularization
+of $10^{-5}$. We use the labeled trials in each cluster to estimate a score
+for each stopping reason. We smooth these scores toward each reason's frequency
+among all labeled training trials, reducing the influence of small clusters.
+For trial $i$'s cluster membership $r_{ik}$ (hard for K-Means, soft for mixture
+models) and observed reason frequency $\pi_j$, the score is
 \begin{equation}
 q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}{\sum_{i\in L}r_{ik}+2}.
 \end{equation}
