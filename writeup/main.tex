@@ -223,16 +223,13 @@ model worsened validation loss (0.56443 to 0.56572).
 At $\mathrm{max\_df}=0.5$, the only term removed by the document-frequency
 cutoff is ``drug,'' present in 4,042/8,037 training rows. Loss falls only
 0.56443 to 0.56412 relative to the earlier combined model; both receive
-the same reported public Kaggle log loss, 0.59801. We tested pooled sigmoid
-calibration on the earlier no-year combined model with $\mathrm{min\_df}=3$,
-not on the selected $\mathrm{min\_df}=5$, $\mathrm{max\_df}=0.5$ variant.
-A sigmoid learns a mapping from model scores to success probabilities using
-five trial-grouped, training-only out-of-fold predictions; preprocessing is
-refitted within each fold. This monotone adjustment changes confidence while
-preserving the base classifier's text features and score ranking. It reduced the
-earlier model's validation loss from 0.56443 to 0.56231, but its reported public
-loss increased from 0.59801 to 0.59841, so the selected model remains
-uncalibrated. Public scores do not establish private-test performance.
+the same reported public Kaggle log loss, 0.59801. We tried sigmoid calibration
+on an earlier combined-text model with $\mathrm{min\_df}=3$, rather than the
+selected $\mathrm{min\_df}=5$, $\mathrm{max\_df}=0.5$ model. It adjusts predicted
+success probabilities using held-out training folds, keeping all rows from the
+same trial together. Validation loss improved from 0.56443 to 0.56231, but
+reported public loss worsened from 0.59801 to 0.59841. We kept the selected
+model uncalibrated, although this small public difference is uncertain.
 \begin{table}[t]
 \centering\small\setlength{\tabcolsep}{3pt}\input{tables/overall}
 \caption{Part 2 overall validation metrics; lower log loss is better. ROC denotes
