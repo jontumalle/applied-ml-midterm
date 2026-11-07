@@ -6,32 +6,30 @@
 \usepackage[hidelinks]{hyperref}
 \graphicspath{{figures/}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
-\title{Clinical-Trial Stopping Reasons and Outcomes:\\An Integrated Semi-Supervised and Calibrated Pipeline}
+\title{Clinical-Trial Stopping Reasons and Outcomes:\\Semi-Supervised Prediction and Calibrated Classification}
 \author{\todo{Part 1 contributor: full name} \and \todo{Part 2 contributor: full name}\\
 CS5785 / ORIE5750 / ECE5414, Cornell University, Fall 2026}
 \begin{document}
 \maketitle
 \noindent\textbf{Responsibilities.} Part 1 contributor: reason-label preprocessing,
 semi-supervised recovery, classifier experiments and predictions. Part 2 contributor:
-outcome modeling, calibration, cross-part analysis and integration.
+outcome modeling, calibration and reason-based error analysis.
 \todo{Confirm full names, responsibilities and any additional team members.}
 
 \begin{abstract}
-We integrate two independently developed approaches without refitting either
-selected model. For five overlapping stopping reasons, a K-Means/3-neighbor
+We study stopping-reason prediction and trial-outcome classification using
+semi-supervised learning and calibrated classification. For five overlapping stopping reasons, a K-Means/3-neighbor
 hybrid followed by weighted logistic regression achieves validation sample F1
 0.88675 and macro F1 0.77923. For trial success, pooled eligibility-text TF-IDF
 logistic regression with phase encoding achieves validation log loss 0.57375;
 training-only, trial-grouped sigmoid calibration modestly improves it to 0.57221.
-The authoritative reason predictions resolve 131 previously unavailable
-trial-phase rows as estimates, enabling complete recorded-reason coverage in
-outcome error analysis. Probability metrics improve modestly, while some small
+Predicted reasons enable recorded-reason coverage in the outcome error analysis. Probability metrics improve modestly, while some small
 reason groups retain high false-success rates. Temporal shift, predicted-reason
 error and repeated validation selection limit generalization claims.
 \end{abstract}
 
 \section{Methods}
-\subsection{Data and integration controls}
+\subsection{Data and leakage controls}
 We use only the supplied assignment data~\cite{assignment}. Part 1 has 1,171
 training trials (157 visible labels; 1,014 rows masked as $-100$), 78 validation
 trials and 312 test trials. Reasons are Safety, Funding, Efficacy, Recruitment
@@ -41,11 +39,8 @@ Repeated combined-phase trials stay within one supplied split. IDs match records
 but are never predictive features. No deep learning or external outcome labels
 are used.
 
-The integration starts from shared main and copies only Michael's Part 2
-subtree. Main's final hybrid Part 1, rather than Michael's older K=8 approach,
-is authoritative. Original sources and artifacts remain unchanged; newly joined
-reason analyses are stored separately. Neither outcome training nor calibration
-uses reason labels, embeddings, predictions, or their derived groups.
+Neither outcome training nor calibration uses reason labels, embeddings,
+predictions, or their derived groups.
 
 \subsection{Part 1: recovery and classification}
 Standardize the 150 reason embeddings on all training rows. Fit K-Means with
@@ -182,10 +177,7 @@ versus 66.12\% observed. Among 79 predictions at least 0.8, mean probability is
 85.80\% versus 92.41\% observed success, indicating underconfidence there.
 The 0.4--0.5 bin overpredicts (45.21\% versus 26.47\%, $n=34$), so calibration
 is mixed (Figure~\ref{fig:reliability}). Pooled Brier improves from 0.19547 to
-0.19493 overall and 0.18089 to 0.18019 in Phase III. No leaderboard score is
-recorded for Michael's retained calibrated candidate: \todo{add verified score
-and submission identity if available}. Main's separate Part 2 score 0.61046
-belongs to another classifier and must not be attributed to this model.
+0.19493 overall and 0.18089 to 0.18019 in Phase III. No leaderboard score is recorded for the selected calibrated model: \todo{add a verified score and submission identity if available}.
 \begin{figure}[t]
 \centering\includegraphics[width=.95\linewidth]{phase3_reliability.pdf}
 \caption{Phase III reliability from fixed ten-bin validation summaries. Sparse
@@ -193,16 +185,14 @@ bins are noisy; the diagonal denotes perfect calibration. Source: build\_tables.
 \label{fig:reliability}
 \end{figure}
 
-\subsection{Integrated reason coverage and errors}
-All 131 previously unresolved phase rows (113 unique trials) now have saved hybrid
-pseudo-labels; none become ground truth. Among 452 unsuccessful phase rows
+\subsection{Reason coverage and errors}
+Hybrid pseudo-labels are available for 131 phase rows (113 unique trials)
+whose reasons were masked; these labels remain estimates. Among 452 unsuccessful phase rows
 (398 trials), 27 use true reasons, 171 predicted reasons and 254 have no Part 1
-record. Unresolved count is now zero. These estimates replace Michael's old
-test-reason predictions as well as fill the masked-train gap; outcome probabilities
-remain exactly unchanged.
+record. Reason estimates are available for all matched records.
 \begin{table}[t]
 \centering\small\setlength{\tabcolsep}{3pt}\input{tables/reason_errors}
-\caption{Integrated unsuccessful-trial groups. T/P: true/predicted reason counts;
+\caption{Unsuccessful-trial groups. T/P: true/predicted reason counts;
 Raw/Pool: false-success fractions before/after pooled calibration. No record
 counts are absent records, not T/P. Groups overlap; -- means undefined.}
 \label{tab:reasons}
@@ -241,8 +231,7 @@ with which to quantify that gap. Reusing validation for 37 outcome settings and
 two calibrators creates selection optimism. Seven training/validation eligibility
 texts match exactly, despite disjoint IDs, which may also make validation easier.
 Combined-phase rows are correlated, and per-phase sample sizes differ. We report
-row and phase-macro losses distinctly. No additional training or broad search
-was performed during integration. A temporal holdout and repeated-seed checks
+row and phase-macro losses distinctly. A temporal holdout and repeated-seed checks
 are future work, not completed experiments.
 
 \begin{thebibliography}{9}
@@ -251,7 +240,7 @@ are future work, not completed experiments.
 \texttt{Midterm\_Project.tex}; PDF unavailable in this checkout.
 \bibitem{artifacts} Team project artifacts, Fall 2026.
 \texttt{PART1\_NOTES.md}, hybrid selection/prediction files and validation tables.
-Source commits and SHA-256 values: \texttt{integration/provenance.json}.
+
 \bibitem{clustering} Scikit-learn developers. \emph{Clustering}, documentation.
 \url{https://scikit-learn.org/stable/modules/clustering.html}.
 \bibitem{tfidf} Scikit-learn developers. \emph{TfidfVectorizer}, API documentation.
@@ -260,6 +249,6 @@ Source commits and SHA-256 values: \texttt{integration/provenance.json}.
 \url{https://scikit-learn.org/stable/modules/calibration.html}.
 \end{thebibliography}
 \noindent\textbf{AI assistance disclosure (review before submission).}
-Codex assisted with implementation, verification, integration and drafting.
+Codex assisted with implementation, verification and drafting.
 \todo{Confirm wording against the course policy and each contributor's actual use.}
 \end{document}
