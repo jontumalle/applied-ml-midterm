@@ -24,7 +24,8 @@ weighted logistic regression, achieves a validation sample F1 of 0.88675 and
 macro F1 of 0.77923. To predict trial success, we use pooled logistic regression
 with eligibility-text TF-IDF features and phase encoding. It achieves a validation
 log loss of 0.57375. Sigmoid calibration reduces this to 0.57221; the calibration
-uses only training data and groups observations by trial. Using predicted stopping
+uses only training data and groups observations by trial. The calibrated model
+achieves a Kaggle leaderboard log loss of 0.59854. Using predicted stopping
 reasons, we could examine errors for every trial that appeared in both parts of the
 study. In some small groups of trials, the model often predicted success when the
 trials had actually failed. These results may not hold as well for other trials
