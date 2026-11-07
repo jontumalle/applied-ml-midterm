@@ -105,11 +105,14 @@ $C\in\{0.1,1,10\}$. TF-IDF downweights words common across trials, while
 sublinear term frequency reduces the influence of repeated words within a trial.
 We retain up to 3,000 unigrams appearing in at least three training trials.
 
-The selected hybrid equally averages scores from the best 10-cluster model
-and three uniform neighbors among the 157 labeled training trials. Recover
-masked labels at 0.3 with the fallback, then fit LR with $C=0.1$ and pseudo-weight
-0.25. Select by validation sample F1, then macro F1. K-Means/GMM and feature
-construction use standard scikit-learn implementations~\cite{clustering,tfidf}.
+We select the model with the highest validation sample F1, using macro F1 to
+break ties. The selected hybrid averages K-Means scores from 10 clusters with
+K-NN scores from three equally weighted labeled neighbors. This combines broader
+cluster patterns with evidence from similar individual trials. We recover masked
+labels at a cutoff of 0.3, assigning the highest-scoring reason if none qualifies,
+then train logistic regression with $C=0.1$ and recovered-label weight 0.25.
+K-Means, Gaussian mixture models, and feature construction use scikit-learn
+implementations~\cite{clustering,tfidf}.
 
 \subsection{Part 2: fixed model and controlled experiments}
 First predict each phase's training success prior. Compare 36 LR settings:
