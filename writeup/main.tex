@@ -74,15 +74,15 @@ models) and observed reason frequency $\pi_j$, the score is
 \begin{equation}
 q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}{\sum_{i\in L}r_{ik}+2}.
 \end{equation}
-To fill in masked labels, we assign each reason whose score reaches a threshold
-of 0.3 or 0.5, comparing both settings. If no reason reaches the threshold, we
-assign the highest-scoring reason. We keep all observed labels unchanged. We
-then train one logistic regression classifier per reason, using both observed
-and recovered labels. We compare giving recovered labels either one-quarter
-of the weight of observed labels or equal weight. The classifiers use L2
-regularization with $C\in\{0.1,1\}$, the liblinear solver, at most 1,000
-iterations, and seed 42. For final predictions, we assign reasons with scores
-of at least 0.5; if none qualifies, we again choose the highest-scoring reason.
+We use the cluster scores to fill in missing stopping reasons, comparing cutoffs
+of 0.3 and 0.5. A trial receives every reason that meets the cutoff, or its
+highest-scoring reason if none qualifies. We then combine these estimated labels
+with the unchanged observed labels to train one logistic regression classifier
+per reason. Because estimated labels can be wrong, we test whether giving them
+one-quarter of the influence of observed labels works better than treating both
+equally. We also compare two regularization settings ($C=0.1$ and $C=1$).
+For final predictions, each classifier uses a cutoff of 0.5, again keeping the
+highest-scoring reason if none qualifies.
 
 The 70-setting initial suite includes supervised controls, 48 cluster-augmented
 settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
