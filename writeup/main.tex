@@ -86,14 +86,13 @@ settings $C\in\{0.1,1\}$ (liblinear, at most 1,000 iterations, seed 42).
 For final predictions, we assign all reasons with scores of at least 0.5,
 keeping the highest-scoring reason if none qualifies.
 
-We begin by testing whether labels recovered with K-Means or Gaussian mixture
-models improve logistic regression compared with training only on observed
-labels. We also add trial year and TF-IDF text features to test whether they
-provide useful information beyond the embeddings. We use PCA to visualize
-the embeddings and inspect cluster-level reason frequencies to understand the
-recovered labels. The cluster scores show that no masked trial receives a
-Funding label, motivating four Funding-cutoff settings, including the original
-cutoff as a control. Lowering the cutoff adds false positives without finding
+Our initial comparisons test whether K-Means or Gaussian mixture models can
+recover labels that improve logistic regression, and whether adding trial year
+and TF-IDF text features helps beyond embeddings alone. To understand the
+recovery results, we visualize the embeddings with PCA and examine reason
+frequencies within clusters. The cluster scores fall below the recovery cutoff
+for Funding, leaving no masked trial labeled with that reason. We therefore
+compare lower Funding cutoffs with the original setting. Lowering the cutoff adds false positives without finding
 more Funding cases in validation. We therefore test K-nearest neighbors (K-NN)
 to capture information from nearby labeled trials rather than an entire cluster.
 We compare direct K-NN predictions, K-NN label recovery followed by logistic
